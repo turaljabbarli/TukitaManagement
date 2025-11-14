@@ -1,0 +1,53 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace TukitaSystem
+{
+    public class Ingredient
+    {
+        private static List<Ingredient> _extent = new List<Ingredient>();
+
+        private string _name;
+        private int _currentStock;
+
+        public Ingredient(string name, int currentStock, bool isVegetarian, bool isAllergic)
+        {
+            Name = name;
+            CurrentStock = currentStock;
+            IsVegetarian = isVegetarian;
+            IsAllergic = isAllergic;
+
+            _extent.Add(this);
+        }
+
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("Ingredient name cannot be empty.");
+                _name = value;
+            }
+        }
+
+        public int CurrentStock
+        {
+            get => _currentStock;
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentException("Stock cannot be negative.");
+                _currentStock = value;
+            }
+        }
+
+        public bool IsVegetarian { get; set; }
+        public bool IsAllergic { get; set; }
+
+        public static List<Ingredient> GetExtent()
+        {
+            return new List<Ingredient>(_extent);
+        }
+    }
+}
