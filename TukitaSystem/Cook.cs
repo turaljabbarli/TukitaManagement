@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace TukitaSystem
@@ -7,22 +7,28 @@ namespace TukitaSystem
     {
         private string? _signatureDish;
         private List<string> _knownDishes;
-        private Education _education;
+        private string _education;
 
-        public Cook(string name, string surname, DateTime birthDate, decimal baseSalary, DateTime employmentDate, Education education)
+        public Cook(
+            string name,
+            string surname,
+            DateTime birthDate,
+            decimal baseSalary,
+            DateTime employmentDate,
+            string education)
             : base(name, surname, birthDate, baseSalary, employmentDate)
         {
             Education = education;
             _knownDishes = new List<string>();
         }
 
-        public Education Education
+        public string Education
         {
             get => _education;
             set
             {
-                if (value == null)
-                    throw new ArgumentNullException("Education cannot be null.");
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("Education cannot be empty.");
                 _education = value;
             }
         }
