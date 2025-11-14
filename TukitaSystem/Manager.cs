@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace TukitaSystem
 {
@@ -6,13 +6,21 @@ namespace TukitaSystem
     {
         private int _yearsOfExperience;
 
-        public Manager(string name, string surname, DateTime birthDate, decimal baseSalary, DateTime employmentDate, Rank rank, int yearsOfExperience)
+        public Manager(
+            string name,
+            string surname,
+            DateTime birthDate,
+            decimal baseSalary,
+            DateTime employmentDate,
+            string rank,
+            int yearsOfExperience)
             : base(name, surname, birthDate, baseSalary, employmentDate)
         {
             Rank = rank;
             YearsOfExperience = yearsOfExperience;
         }
-        public Rank Rank { get; set; }
+
+        public string Rank { get; set; }
 
         public int YearsOfExperience
         {
