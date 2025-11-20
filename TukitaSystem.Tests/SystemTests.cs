@@ -28,16 +28,19 @@ namespace TukitaSystem.Tests
         [Test]
         public void Order_CalculateFinalPrice_SumsCorrectly()
         {
-            var cashier = new Cashier("Alice", "Smith", DateTime.Today.AddYears(-25), 2500, DateTime.Today);
+            var cashier = new Cashier("Alice", "Smith", "FF31213123", DateTime.Today.AddYears(-25), 2500, DateTime.Today)
+            {
+                PeselNumber = "1234567890"
+            };
             var customer = new Customer("Bob", "bob@example.com");
             var order = new Order(cashier, customer);
 
             var patties = new List<PattyType> { PattyType.Beef };
             var burger = new Burger("Cheeseburger", 10.0m, 800, 10, patties);
-            var drink = new Drink("Coke", 2.5m, 150, 2, true, Size.Medium);
+            var drink = new Drink("Coke", 2.5m, 150, 2, true, SizeType.Medium);
 
-            order.AddItem(burger, 2); // 20.0
-            order.AddItem(drink, 1);  // 2.5
+            order.AddItem(burger, 2);
+            order.AddItem(drink, 1);
 
             Assert.AreEqual(22.5m, order.FinalPrice);
         }
@@ -61,9 +64,9 @@ namespace TukitaSystem.Tests
         [Test]
         public void Shift_EndBeforeStart_ThrowsException()
         {
-            var cashier = new Cashier("Alice", "Smith", DateTime.Today.AddYears(-25), 2500, DateTime.Today);
-            var start = new TimeSpan(14, 0, 0); // 2 PM
-            var end = new TimeSpan(10, 0, 0);   // 10 AM
+            var cashier = new Cashier("Alice", "Smith", "FS1234567", DateTime.Today.AddYears(-25), 2500, DateTime.Today);
+            var start = new TimeSpan(14, 0, 0);
+            var end = new TimeSpan(10, 0, 0);
 
             Assert.Throws<ArgumentException>(() => new Shift(ShiftType.Morning, DateTime.Today, start, end, cashier));
         }
@@ -82,9 +85,7 @@ namespace TukitaSystem.Tests
             var ingredient = new Ingredient("Tomato", 100, true, false);
 
             burger.AddIngredient(ingredient, 2);
-
-            // We can't access private dictionary directly, but this ensures no exception is thrown
-            // and logic executes.
+            
             Assert.DoesNotThrow(() => burger.AddIngredient(ingredient, 1));
         }
     }

@@ -20,14 +20,14 @@ namespace TukitaSystem
             Cashier = cashier;
             Customer = customer;
             TimeAdded = DateTime.Now;
-            Status = OrderStatus.Confirmed;
+            StatusType = OrderStatusType.Confirmed;
             _items = new Dictionary<MenuItem, int>();
 
             _extent.Add(this);
         }
 
         public DateTime TimeAdded { get; private set; }
-        public OrderStatus Status { get; set; }
+        public OrderStatusType StatusType { get; set; }
 
         public Cashier Cashier
         {

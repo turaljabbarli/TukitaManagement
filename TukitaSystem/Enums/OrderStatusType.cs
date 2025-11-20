@@ -1,6 +1,6 @@
 ﻿namespace TukitaSystem
 {
-    public enum OrderStatus
+    public enum OrderStatusType
     {
         Confirmed,
         Preparing,

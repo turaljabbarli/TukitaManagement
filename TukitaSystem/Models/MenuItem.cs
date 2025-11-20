@@ -6,15 +6,12 @@ namespace TukitaSystem
 {
     public abstract class MenuItem
     {
-        private static List<MenuItem> _extent = new List<MenuItem>();
+        private static List<MenuItem> _extend = new List<MenuItem>();
 
         private string _name;
         private decimal _price;
         private int _calories;
-        private int _preparationTime; // In minutes
-
-        // Stores the ingredient and the quantity required (e.g., Beef Patty: 1)
-        private Dictionary<Ingredient, int> _recipe;
+        private int _preparationTime;
 
         public MenuItem(string name, decimal price, int calories, int preparationTime)
         {
@@ -23,18 +20,21 @@ namespace TukitaSystem
             Calories = calories;
             PreparationTime = preparationTime;
             IsAvailable = true;
-            _recipe = new Dictionary<Ingredient, int>();
 
-            _extent.Add(this);
+            _extend.Add(this);
         }
 
+        public bool IsAvailable { get; set; }
         public string Name
         {
             get => _name;
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
+                {
                     throw new ArgumentException("Menu item name cannot be empty.");
+                }
+
                 _name = value;
             }
         }
@@ -45,7 +45,10 @@ namespace TukitaSystem
             set
             {
                 if (value < 0)
+                {
                     throw new ArgumentException("Price cannot be negative.");
+                }
+
                 _price = value;
             }
         }
@@ -56,7 +59,10 @@ namespace TukitaSystem
             set
             {
                 if (value < 0)
+                {
                     throw new ArgumentException("Calories cannot be negative.");
+                }
+
                 _calories = value;
             }
         }
@@ -67,32 +73,42 @@ namespace TukitaSystem
             set
             {
                 if (value <= 0)
+                {
                     throw new ArgumentException("Preparation time must be greater than zero.");
+                }
+
                 _preparationTime = value;
             }
         }
-
-        public bool IsAvailable { get; set; }
-
-        // Helper to add ingredients with quantity
+        
+        public static MenuItem SearchForItem(string name)
+        {
+            return _extend.FirstOrDefault(item => 
+                item.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        }
+        
+        public void AddItemToOrder(List<MenuItem> order)
+        {
+            if (IsAvailable)
+                order.Add(this);
+        }
+        
         public void AddIngredient(Ingredient ingredient, int quantity)
         {
-            if (ingredient == null) throw new ArgumentNullException(nameof(ingredient));
-            if (quantity <= 0) throw new ArgumentException("Quantity must be positive.");
-
-            if (_recipe.ContainsKey(ingredient))
+            if (ingredient == null)
             {
-                _recipe[ingredient] += quantity;
+                throw new ArgumentNullException(nameof(ingredient));
             }
-            else
+
+            if (quantity <= 0)
             {
-                _recipe.Add(ingredient, quantity);
+                throw new ArgumentException("Quantity must be positive.");
             }
         }
 
-        public static List<MenuItem> GetExtent()
+        public static List<MenuItem> GetExtend()
         {
-            return new List<MenuItem>(_extent);
+            return new List<MenuItem>(_extend);
         }
     }
 }

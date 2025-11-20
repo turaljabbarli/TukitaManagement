@@ -5,7 +5,7 @@
         Beef,
         Chicken,
         Fish,
-        Bean, // Vegetarian option
-        Mushroom // Vegetarian option
+        Bean,
+        Mushroom
     }
 }

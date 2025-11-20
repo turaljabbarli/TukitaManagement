@@ -10,19 +10,28 @@ namespace TukitaSystem
 
         private string _name;
         private string _surname;
+        private string? _peselNumber;
+        private string _passportNumber;
         private DateTime _birthDate;
         private decimal _baseSalary;
         private DateTime _employmentDate;
 
-        public Employee(string name, string surname, DateTime birthDate, decimal baseSalary, DateTime employmentDate)
+        public Employee(string name, string surname, string passportNumber, DateTime birthDate, decimal baseSalary, DateTime employmentDate)
         {
             Name = name;
             Surname = surname;
+            PassportNumber = passportNumber;
             BirthDate = birthDate;
             BaseSalary = baseSalary;
             EmploymentDate = employmentDate;
 
             _extent.Add(this);
+        }
+        
+        public string? PeselNumber
+        {
+            get => _peselNumber;
+            set => _peselNumber = value;
         }
 
         public string Name
@@ -44,6 +53,17 @@ namespace TukitaSystem
                 if (string.IsNullOrWhiteSpace(value))
                     throw new ArgumentException("Surname cannot be empty or whitespace.");
                 _surname = value;
+            }
+        }
+        
+        public string PassportNumber
+        {
+            get => _passportNumber;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("Passport number cannot be empty or whitespace.");
+                _passportNumber = value;
             }
         }
 
@@ -103,6 +123,20 @@ namespace TukitaSystem
                 decimal multiplier = (decimal)Math.Pow(1.03, yearsWorked);
                 return Math.Round(_baseSalary * multiplier, 2);
             }
+        }
+        
+        public static List<Employee> SearchForEmployee(
+            string? name = null,
+            string? surname = null,
+            string? passportNumber = null,
+            string? peselNumber = null)
+        {
+            return _extent.Where(e =>
+                (name == null || e.Name.Equals(name, StringComparison.OrdinalIgnoreCase)) &&
+                (surname == null || e.Surname.Equals(surname, StringComparison.OrdinalIgnoreCase)) &&
+                (passportNumber == null || e.PassportNumber.Equals(passportNumber, StringComparison.OrdinalIgnoreCase)) &&
+                (peselNumber == null || e.PeselNumber == peselNumber)
+            ).ToList();
         }
 
         public static List<Employee> GetExtent()

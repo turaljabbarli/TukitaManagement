@@ -7,6 +7,7 @@ namespace TukitaSystem
     {
         private static List<Shift> _extent = new List<Shift>();
 
+        private static int _workingHours = 8;
         private TimeSpan _startAt;
         private TimeSpan _endAt;
         private double? _hoursWorked;

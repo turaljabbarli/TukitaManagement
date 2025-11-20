@@ -40,8 +40,7 @@ namespace TukitaSystem
                 _email = value;
             }
         }
-
-        // Association: 0..1 LoyaltyCard
+        
         public LoyaltyCard? LoyaltyCard { get; set; }
 
         public void AssignLoyaltyCard(LoyaltyCard card)

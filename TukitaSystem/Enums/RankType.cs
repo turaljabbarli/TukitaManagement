@@ -1,6 +1,6 @@
 ﻿namespace TukitaSystem
 {
-    public enum Rank
+    public enum RankType
     {
         Junior,
         Senior,

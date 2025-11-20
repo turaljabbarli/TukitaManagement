@@ -1,6 +1,6 @@
 ﻿namespace TukitaSystem
 {
-    public enum Size
+    public enum SizeType
     {
         Small,
         Medium,

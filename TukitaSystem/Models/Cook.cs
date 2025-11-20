@@ -7,22 +7,24 @@ namespace TukitaSystem
     {
         private string? _signatureDish;
         private List<string> _knownDishes;
-        private Education _education;
+        private string _education;
 
-        public Cook(string name, string surname, DateTime birthDate, decimal baseSalary, DateTime employmentDate, Education education)
-            : base(name, surname, birthDate, baseSalary, employmentDate)
+        public Cook(string name, string surname, string passportNumber, DateTime birthDate, decimal baseSalary, DateTime employmentDate, string education)
+            : base(name, surname, passportNumber, birthDate, baseSalary, employmentDate)
         {
             Education = education;
             _knownDishes = new List<string>();
         }
 
-        public Education Education
+        public string Education
         {
             get => _education;
             set
             {
                 if (value == null)
-                    throw new ArgumentNullException("Education cannot be null.");
+                {
+                    throw new ArgumentException("Education cannot be null.");
+                }
                 _education = value;
             }
         }

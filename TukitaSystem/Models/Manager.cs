@@ -6,13 +6,13 @@ namespace TukitaSystem
     {
         private int _yearsOfExperience;
 
-        public Manager(string name, string surname, DateTime birthDate, decimal baseSalary, DateTime employmentDate, Rank rank, int yearsOfExperience)
-            : base(name, surname, birthDate, baseSalary, employmentDate)
+        public Manager(string name, string surname, string passportNumber, DateTime birthDate, decimal baseSalary, DateTime employmentDate, RankType rankType, int yearsOfExperience)
+            : base(name, surname, passportNumber, birthDate, baseSalary, employmentDate)
         {
-            Rank = rank;
+            RankType = rankType;
             YearsOfExperience = yearsOfExperience;
         }
-        public Rank Rank { get; set; }
+        public RankType RankType { get; set; }
 
         public int YearsOfExperience
         {
