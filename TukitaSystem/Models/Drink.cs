@@ -5,7 +5,7 @@ namespace TukitaSystem
 {
     public class Drink : MenuItem
     {
-        public Drink(string name, decimal price, int calories, int preparationTime, bool isCarbonated, SizeType sizeType)
+        public Drink(string name, decimal price, int calories, string preparationTime, bool isCarbonated, SizeType sizeType)
             : base(name, price, calories, preparationTime)
         {
             IsCarbonated = isCarbonated;

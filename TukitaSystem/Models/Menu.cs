@@ -4,6 +4,9 @@ namespace TukitaSystem
 {
     public class Menu
     {
+        private static List<Menu> _extent = new List<Menu>();
+        private static readonly string FilePath = "menu.json";
+        
         private string _name;
         private TimeSpan _startTime;
         private TimeSpan _endTime;
@@ -14,6 +17,8 @@ namespace TukitaSystem
             StartTime = startTime;
             EndTime = endTime;
             IsAvailable = true;
+            
+            _extent.Add(this);
         }
 
         public bool IsAvailable { get; set; }
@@ -59,6 +64,21 @@ namespace TukitaSystem
         public string ServingInterval()
         {
             return $"{StartTime:hh\\:mm} - {EndTime:hh\\:mm}";
+        }
+        
+        public static List<Menu> GetExtent()
+        {
+            return new List<Menu>(_extent);
+        }
+        
+        public static void SaveExtent()
+        {
+            StorageService.Save(_extent, FilePath);
+        }
+
+        public static void LoadExtent()
+        {
+            _extent = StorageService.Load<Menu>(FilePath);
         }
     }
 }

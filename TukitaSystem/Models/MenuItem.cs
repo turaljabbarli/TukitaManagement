@@ -1,19 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace TukitaSystem
 {
+    [JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
+    [JsonDerivedType(typeof(Burger), "Burger")]
+    [JsonDerivedType(typeof(Dessert), "Dessert")]
+    [JsonDerivedType(typeof(Drink), "Drink")]
     public abstract class MenuItem
     {
-        private static List<MenuItem> _extend = new List<MenuItem>();
+        private static List<MenuItem> _extent = new List<MenuItem>();
+        private static readonly string FilePath = "menuItems.json";
 
         private string _name;
         private decimal _price;
         private int _calories;
-        private int _preparationTime;
+        private string _preparationTime;
 
-        public MenuItem(string name, decimal price, int calories, int preparationTime)
+        public MenuItem(string name, decimal price, int calories, string preparationTime)
         {
             Name = name;
             Price = price;
@@ -21,7 +28,7 @@ namespace TukitaSystem
             PreparationTime = preparationTime;
             IsAvailable = true;
 
-            _extend.Add(this);
+            _extent.Add(this);
         }
 
         public bool IsAvailable { get; set; }
@@ -67,14 +74,14 @@ namespace TukitaSystem
             }
         }
 
-        public int PreparationTime
+        public string PreparationTime
         {
             get => _preparationTime;
             set
             {
-                if (value <= 0)
+                if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new ArgumentException("Preparation time must be greater than zero.");
+                    throw new ArgumentException("Preparation time cannot be empty..");
                 }
 
                 _preparationTime = value;
@@ -83,7 +90,7 @@ namespace TukitaSystem
         
         public static MenuItem SearchForItem(string name)
         {
-            return _extend.FirstOrDefault(item => 
+            return _extent.FirstOrDefault(item => 
                 item.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
         
@@ -108,7 +115,17 @@ namespace TukitaSystem
 
         public static List<MenuItem> GetExtend()
         {
-            return new List<MenuItem>(_extend);
+            return new List<MenuItem>(_extent);
+        }
+
+        public static void SaveExtent()
+        {
+            StorageService.Save(_extent, FilePath);
+        }
+
+        public static void LoadExtent()
+        {
+            _extent = StorageService.Load<MenuItem>(FilePath);
         }
     }
 }

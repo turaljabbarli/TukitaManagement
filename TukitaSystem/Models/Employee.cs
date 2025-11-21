@@ -1,12 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace TukitaSystem
 {
+    [JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
+    [JsonDerivedType(typeof(Cashier), "Cashier")]
+    [JsonDerivedType(typeof(Manager), "Manager")]
+    [JsonDerivedType(typeof(Cook), "Cook")]
     public abstract class Employee
     {
         private static List<Employee> _extent = new List<Employee>();
+        private static readonly string FilePath = "employees.json";
 
         private string _name;
         private string _surname;
@@ -142,6 +149,16 @@ namespace TukitaSystem
         public static List<Employee> GetExtent()
         {
             return new List<Employee>(_extent);
+        }
+        
+        public static void SaveExtent()
+        {
+            StorageService.Save(_extent, FilePath);
+        }
+
+        public static void LoadExtent()
+        {
+            _extent = StorageService.Load<Employee>(FilePath);
         }
     }
 }

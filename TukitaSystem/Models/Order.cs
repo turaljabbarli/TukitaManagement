@@ -7,6 +7,7 @@ namespace TukitaSystem
     public class Order
     {
         private static List<Order> _extent = new List<Order>();
+        private static readonly string FilePath = "orders.json";
 
         private Dictionary<MenuItem, int> _items;
         private Cashier _cashier;
@@ -83,5 +84,15 @@ namespace TukitaSystem
         {
             return new List<Order>(_extent);
         }
+        
+        /*public static void SaveExtent()
+        {
+            StorageService.Save(_extent, FilePath);
+        }
+
+        public static void LoadExtent()
+        {
+            _extent = StorageService.Load<Order>(FilePath);
+        }*/
     }
 }

@@ -7,7 +7,7 @@ namespace TukitaSystem
     {
         private List<FlavorType> _flavors;
 
-        public Dessert(string name, decimal price, int calories, int preparationTime, bool isFrozen, List<FlavorType> flavors)
+        public Dessert(string name, decimal price, int calories, string preparationTime, bool isFrozen, List<FlavorType> flavors)
             : base(name, price, calories, preparationTime)
         {
             IsFrozen = isFrozen;

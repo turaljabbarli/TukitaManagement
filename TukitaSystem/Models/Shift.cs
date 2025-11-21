@@ -6,6 +6,7 @@ namespace TukitaSystem
     public class Shift
     {
         private static List<Shift> _extent = new List<Shift>();
+        private static readonly string FilePath = "shifts.json";
 
         private static int _workingHours = 8;
         private TimeSpan _startAt;
@@ -73,6 +74,16 @@ namespace TukitaSystem
         public static List<Shift> GetExtent()
         {
             return new List<Shift>(_extent);
+        }
+        
+        public static void SaveExtent()
+        {
+            StorageService.Save(_extent, FilePath);
+        }
+
+        public static void LoadExtent()
+        {
+            _extent = StorageService.Load<Shift>(FilePath);
         }
     }
 }

@@ -6,6 +6,7 @@ namespace TukitaSystem
     public class Customer
     {
         private static List<Customer> _extent = new List<Customer>();
+        private static readonly string FilePath = "customers.json";
 
         private string _name;
         private string _email;
@@ -51,6 +52,16 @@ namespace TukitaSystem
         public static List<Customer> GetExtent()
         {
             return new List<Customer>(_extent);
+        }
+        
+        public static void SaveExtent()
+        {
+            StorageService.Save(_extent, FilePath);
+        }
+
+        public static void LoadExtent()
+        {
+            _extent = StorageService.Load<Customer>(FilePath);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace TukitaSystem.Tests
         public void Burger_IsVegetarian_ReturnsTrueForVeggiePatties()
         {
             var patties = new List<PattyType> { PattyType.Bean, PattyType.Mushroom };
-            var burger = new Burger("Veggie King", 15.0m, 500, 10, patties);
+            var burger = new Burger("Veggie King", 15.0m, 500, "10-15 minutes", patties);
 
             Assert.IsTrue(burger.IsVegetarian);
         }
@@ -20,7 +20,7 @@ namespace TukitaSystem.Tests
         public void Burger_IsVegetarian_ReturnsFalseForBeef()
         {
             var patties = new List<PattyType> { PattyType.Beef };
-            var burger = new Burger("Beef King", 15.0m, 800, 10, patties);
+            var burger = new Burger("Beef King", 15.0m, 800, "10-15 minutes", patties);
 
             Assert.IsFalse(burger.IsVegetarian);
         }
@@ -36,8 +36,8 @@ namespace TukitaSystem.Tests
             var order = new Order(cashier, customer);
 
             var patties = new List<PattyType> { PattyType.Beef };
-            var burger = new Burger("Cheeseburger", 10.0m, 800, 10, patties);
-            var drink = new Drink("Coke", 2.5m, 150, 2, true, SizeType.Medium);
+            var burger = new Burger("Cheeseburger", 10.0m, 800, "10-15 minutes", patties);
+            var drink = new Drink("Coke", 2.5m, 150, "10-15 minutes", true, SizeType.Medium);
 
             order.AddItem(burger, 2);
             order.AddItem(drink, 1);
@@ -81,7 +81,7 @@ namespace TukitaSystem.Tests
         public void MenuItem_AddIngredient_UpdatesRecipe()
         {
             var patties = new List<PattyType> { PattyType.Beef };
-            var burger = new Burger("Basic Burger", 5.0m, 500, 10, patties);
+            var burger = new Burger("Basic Burger", 5.0m, 500, "10-15 minutes", patties);
             var ingredient = new Ingredient("Tomato", 100, true, false);
 
             burger.AddIngredient(ingredient, 2);

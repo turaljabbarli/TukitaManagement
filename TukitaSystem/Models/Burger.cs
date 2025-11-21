@@ -13,7 +13,7 @@ namespace TukitaSystem
             string name, 
             decimal price, 
             int calories, 
-            int preparationTime, 
+            string preparationTime, 
             List<PattyType> patties)
             : base(name, price, calories, preparationTime)
         {

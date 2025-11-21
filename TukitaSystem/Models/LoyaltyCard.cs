@@ -6,6 +6,7 @@ namespace TukitaSystem
     public class LoyaltyCard
     {
         private static List<LoyaltyCard> _extent = new List<LoyaltyCard>();
+        private static readonly string FilePath = "loyaltyCards.json";
 
         private string _cardNumber;
         private int _loyaltyPoints;
@@ -57,6 +58,16 @@ namespace TukitaSystem
         public static List<LoyaltyCard> GetExtent()
         {
             return new List<LoyaltyCard>(_extent);
+        }
+        
+        public static void SaveExtent()
+        {
+            StorageService.Save(_extent, FilePath);
+        }
+
+        public static void LoadExtent()
+        {
+            _extent = StorageService.Load<LoyaltyCard>(FilePath);
         }
     }
 }
