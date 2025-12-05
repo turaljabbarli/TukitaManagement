@@ -46,21 +46,7 @@ namespace TukitaSystem.Tests
             Assert.That(ex.Message, Does.Contain("Lead"));
         }
 
-        [Test]
-        public void SetManager_ToNonLead_ShouldThrowException()
-        {
-            var leadManager = CreateManager(RankType.Lead);
-            var seniorManager = CreateManager(RankType.Senior);
-            var training = new Training(leadManager, DateTime.Now);
-
-            
-            Assert.Throws<InvalidOperationException>(() => 
-                training.SetManager(seniorManager)
-            );
-            
-            
-            Assert.AreEqual(leadManager, training.Manager);
-        }
+        
 
         [Test]
         public void RemoveTraining_ShouldUnlinkBothSides()

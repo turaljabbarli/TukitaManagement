@@ -65,7 +65,11 @@ namespace TukitaSystem
         {
             if (customer == null)
                 throw new ArgumentNullException(nameof(customer));
-            customer.RemoveLoyaltyCard();
+            
+            if (customer._loyaltyCard != null)
+            {
+                customer.RemoveLoyaltyCard();
+            }
             _extent.Remove(customer);
         }
 
