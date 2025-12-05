@@ -14,6 +14,7 @@ namespace TukitaSystem
         
         private Dictionary<string, MenuItem> _qualifiedItems = new Dictionary<string, MenuItem>();
         public IReadOnlyDictionary<string, MenuItem> QualifiedItems => _qualifiedItems;
+        public bool IsAvailable { get; set; }
 
         public Menu(string name, TimeSpan startTime, TimeSpan endTime)
         {
@@ -24,8 +25,6 @@ namespace TukitaSystem
             
             _extent.Add(this);
         }
-
-        public bool IsAvailable { get; set; }
         public string Name
         {
             get => _name;

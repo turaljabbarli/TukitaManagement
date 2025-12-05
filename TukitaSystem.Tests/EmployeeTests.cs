@@ -8,6 +8,12 @@ namespace TukitaSystem.Tests
 {
     public class EmployeeTests
     {
+        [SetUp]
+        public void Setup()
+        {
+            Employee.ClearExtent();
+        }
+        
         [Test]
         public void CreateCook_ValidData_AddsToExtent()
         {
@@ -93,6 +99,30 @@ namespace TukitaSystem.Tests
             var cook = new Cook("John", "Doe", "FS1234567", DateTime.Today.AddYears(-30), 2000, DateTime.Today, "Bachelor - Culinary School");
 
             Assert.Throws<ArgumentException>(() => cook.SignatureDish = "");
+        }
+        
+        [Test]
+        public void SearchByName_ShouldReturnCorrectEmployee()
+        {
+            var e1 = new Cook("John", "Doe", "FS1234567", DateTime.Today.AddYears(-30), 2000, DateTime.Today, "Bachelor - Culinary School");
+            var e2 = new Cook("John 2", "Doe", "FS1234567", DateTime.Today.AddYears(-30), 2000, DateTime.Today, "Bachelor - Culinary School");
+
+            var results = Employee.SearchForEmployee(name: "John");
+
+            Assert.AreEqual(1, results.Count);
+            Assert.AreEqual(e1, results[0]);
+        }
+
+        [Test]
+        public void SearchBySurname_ShouldReturnCorrectEmployee()
+        {
+            var e1 = new Cook("John", "Doe", "FS1234567", DateTime.Today.AddYears(-30), 2000, DateTime.Today, "Bachelor - Culinary School");
+            var e2 = new Cook("John", "Smith", "FS1234567", DateTime.Today.AddYears(-30), 2000, DateTime.Today, "Bachelor - Culinary School");
+
+            var results = Employee.SearchForEmployee(surname: "Smith");
+
+            Assert.AreEqual(1, results.Count);
+            Assert.AreEqual(e2, results[0]);
         }
     }
 }

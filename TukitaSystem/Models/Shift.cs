@@ -17,6 +17,7 @@ namespace TukitaSystem
         public DateTime Date { get; set; }
         public bool IsPresent { get; set; }
         public List<Employee> Employees { get; private set; } = new();
+        public double ScheduledDuration => (EndAt - StartAt).TotalHours;
 
         public Shift(ShiftType type, DateTime date, TimeSpan startAt, TimeSpan endAt, List<Employee> assignedEmployees)
         {
@@ -69,8 +70,6 @@ namespace TukitaSystem
                 _hoursWorked = value;
             }
         }
-
-        public double ScheduledDuration => (EndAt - StartAt).TotalHours;
         
         public void AddEmployee(Employee employee)
         {

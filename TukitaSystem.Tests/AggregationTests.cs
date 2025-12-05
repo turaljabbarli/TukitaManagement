@@ -2,30 +2,60 @@
 
 public class AggregationTests
 {
-    [Test]
-    public void AddMenuItem_ShouldAddReference_AndSetReverseConnection()
+    
+    private MenuItem item;
+    private Ingredient tomato;
+    private Ingredient cheese;
+    
+    [SetUp]
+    public void Setup()
     {
-        var menu = new Menu("Lunch", new TimeSpan(12, 0, 0), new TimeSpan(15, 0, 0));
         var patties = new List<PattyType> { PattyType.Beef };
-        var burger = new Burger("Hamburger", 10m, 500, "10 mins", patties);
-        
-        menu.AddMenuItem(burger);
-        
-        Assert.Contains(burger, menu.QualifiedItems.Values.ToList());
-        Assert.Contains(menu, burger.Menus.ToList());
+        item = new Burger("Beef King", 15.0m, 800, "10-15 minutes", patties);
+        cheese = new Ingredient("Cheese", 10, false, false);
+        tomato = new Ingredient("Tomato", 20, true, false);
+    }
+    
+    [Test]
+    public void AddIngredient_ShouldAdd()
+    {
+        item.AddIngredient(cheese);
+
+        Assert.AreEqual(1, item.Ingredients.Count);
+        Assert.IsTrue(item.Ingredients.Contains(cheese));
     }
 
     [Test]
-    public void RemoveMenuItem_ShouldRemoveReference_OnBothSides()
+    public void AddIngredient_ShouldIgnoreDuplicate()
     {
-        var menu = new Menu("Dinner", new TimeSpan(18, 0, 0), new TimeSpan(22, 0, 0));
-        var patties = new List<PattyType> { PattyType.Bean };
-        var burger = new Burger("Veggie Burger", 12m, 400, "8 mins", patties);
-        menu.AddMenuItem(burger);
+        item.AddIngredient(cheese);
+        item.AddIngredient(cheese);
 
-        menu.RemoveMenuItem(burger);
-        
-        Assert.IsFalse(menu.GetItem("Veggie Burger", out var result));
-        Assert.IsFalse(burger.Menus.Contains(menu));
+        Assert.AreEqual(1, item.Ingredients.Count);
+    }
+
+    [Test]
+    public void AddIngredient_Null_ShouldThrow()
+    {
+        Assert.Throws<ArgumentNullException>(() => item.AddIngredient(null));
+    }
+
+    [Test]
+    public void RemoveIngredient_ShouldRemove()
+    {
+        item.AddIngredient(cheese);
+
+        bool removed = item.RemoveIngredient(cheese);
+
+        Assert.IsTrue(removed);
+        Assert.AreEqual(0, item.Ingredients.Count);
+    }
+
+    [Test]
+    public void RemoveIngredient_NotPresent_ShouldReturnFalse()
+    {
+        bool result = item.RemoveIngredient(tomato);
+
+        Assert.IsFalse(result);
     }
 }

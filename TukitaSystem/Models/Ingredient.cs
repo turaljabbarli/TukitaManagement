@@ -9,6 +9,9 @@ namespace TukitaSystem
 
         private string _name;
         private int _currentStock;
+        
+        public bool IsVegetarian { get; set; }
+        public bool IsAllergic { get; set; }
 
         public Ingredient(string name, int currentStock, bool isVegetarian, bool isAllergic)
         {
@@ -41,9 +44,6 @@ namespace TukitaSystem
                 _currentStock = value;
             }
         }
-
-        public bool IsVegetarian { get; set; }
-        public bool IsAllergic { get; set; }
 
         public static List<Ingredient> GetExtend()
         {

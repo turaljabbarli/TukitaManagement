@@ -85,9 +85,9 @@ namespace TukitaSystem.Tests
             var burger = new Burger("Basic Burger", 5.0m, 500, "10-15 minutes", patties);
             var ingredient = new Ingredient("Tomato", 100, true, false);
 
-            burger.AddIngredient(ingredient, 2);
+            burger.AddIngredient(ingredient);
             
-            Assert.DoesNotThrow(() => burger.AddIngredient(ingredient, 1));
+            Assert.DoesNotThrow(() => burger.AddIngredient(ingredient));
         }
     }
 }

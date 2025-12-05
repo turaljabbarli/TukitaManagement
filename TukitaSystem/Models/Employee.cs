@@ -23,7 +23,6 @@ namespace TukitaSystem
         private decimal _baseSalary;
         private DateTime _employmentDate;
         
-        [JsonIgnore]
         public List<Shift> Shifts { get; private set; } = new();
 
         public Employee(string name, string surname, string passportNumber, DateTime birthDate, decimal baseSalary, DateTime employmentDate)
@@ -163,6 +162,11 @@ namespace TukitaSystem
         public static List<Employee> GetExtent()
         {
             return new List<Employee>(_extent);
+        }
+        
+        public static void ClearExtent()
+        {
+            _extent.Clear();
         }
         
         public static void SaveExtent()

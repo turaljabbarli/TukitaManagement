@@ -60,6 +60,14 @@ namespace TukitaSystem
                 _loyaltyCard = null;
             }
         }
+        
+        public static void RemoveCustomer(Customer customer)
+        {
+            if (customer == null)
+                throw new ArgumentNullException(nameof(customer));
+            customer.RemoveLoyaltyCard();
+            _extent.Remove(customer);
+        }
 
         public static List<Customer> GetExtent()
         {

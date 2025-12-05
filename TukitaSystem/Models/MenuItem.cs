@@ -24,6 +24,9 @@ namespace TukitaSystem
         private HashSet<OrderDetail> _orderDetails = new HashSet<OrderDetail>();
         public IReadOnlyCollection<Menu> Menus => _menus.ToList();
         public IReadOnlyCollection<OrderDetail> OrderDetails => _orderDetails.ToList();
+        
+        private readonly HashSet<Ingredient> _ingredients = new HashSet<Ingredient>();
+        public IReadOnlyCollection<Ingredient> Ingredients => _ingredients;
 
         public MenuItem(string name, decimal price, int calories, string preparationTime)
         {
@@ -91,7 +94,7 @@ namespace TukitaSystem
             }
         }
         
-        public static MenuItem SearchForItem(string name)
+        public static MenuItem? SearchForItem(string name)
         {
             return _extent.FirstOrDefault(item => 
                 item.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
@@ -99,7 +102,6 @@ namespace TukitaSystem
 
         public void AddMenu(Menu menu)
         {
-            if (menu == null) return;
             if (_menus.Contains(menu))
                 return;
 
@@ -110,7 +112,6 @@ namespace TukitaSystem
 
         public void RemoveMenu(Menu menu)
         {
-            if (menu == null) return;
 
             if (!_menus.Contains(menu))
                 return;
@@ -137,17 +138,22 @@ namespace TukitaSystem
             }
         }
         
-        public void AddIngredient(Ingredient ingredient, int quantity)
+        public void AddIngredient(Ingredient ingredient)
         {
             if (ingredient == null)
             {
                 throw new ArgumentNullException(nameof(ingredient));
             }
 
-            if (quantity <= 0)
-            {
-                throw new ArgumentException("Quantity must be positive.");
-            }
+            _ingredients.Add(ingredient);
+        }
+        
+        public bool RemoveIngredient(Ingredient ingredient)
+        {
+            if (ingredient == null)
+                return false;
+
+            return _ingredients.Remove(ingredient);
         }
 
         public static List<MenuItem> GetExtend()

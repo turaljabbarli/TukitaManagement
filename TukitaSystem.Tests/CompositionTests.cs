@@ -1,7 +1,27 @@
-﻿namespace TukitaSystem.Tests;
+﻿using System.Reflection;
+
+namespace TukitaSystem.Tests;
 
 public class CompositionTests
 {
+    [Test]
+    public void RemoveCustomer_ShouldRemoveCardToo()
+    {
+        var customer = new Customer("Test User", "test@example.com");
+        customer.CreateLoyaltyCard("ABC123", DateTime.Now.AddYears(1));
+
+        var card = customer.LoyaltyCard;
+
+        Customer.RemoveCustomer(customer);
+        Assert.IsNull(customer.LoyaltyCard);
+
+        var customerField = typeof(LoyaltyCard)
+            .GetField("_customer", BindingFlags.NonPublic | BindingFlags.Instance);
+
+        Assert.IsNull(customerField.GetValue(card));
+        Assert.IsFalse(Customer.GetExtent().Contains(customer));
+    }
+    
     [Test]
     public void CreateLoyaltyCard_ShouldLinkToCustomer_AndSetReverseConnection()
     {
@@ -35,3 +55,4 @@ public class CompositionTests
         Assert.Throws<InvalidOperationException>(() => customer.CreateLoyaltyCard("22222", DateTime.Now.AddYears(1)));
     }
 }
+
