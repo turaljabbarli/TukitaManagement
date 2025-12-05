@@ -10,12 +10,19 @@ namespace TukitaSystem
 
         private string _cardNumber;
         private int _loyaltyPoints;
+        private Customer _customer;
+        
+        public Customer Customer => _customer;
+        public DateTime CreationDate { get; set; }
+        public DateTime ExpiryDate { get; set; }
 
-        public LoyaltyCard(string cardNumber, DateTime creationDate, DateTime expiryDate)
+        public LoyaltyCard(Customer customer, string cardNumber, DateTime creationDate, DateTime expiryDate)
         {
+            if (customer == null) throw new ArgumentNullException(nameof(customer));
             if (expiryDate <= creationDate)
                 throw new ArgumentException("Expiry date must be after creation date.");
 
+            _customer = customer;
             CardNumber = cardNumber;
             CreationDate = creationDate;
             ExpiryDate = expiryDate;
@@ -35,9 +42,6 @@ namespace TukitaSystem
             }
         }
 
-        public DateTime CreationDate { get; set; }
-        public DateTime ExpiryDate { get; set; }
-
         public int LoyaltyPoints
         {
             get => _loyaltyPoints;
@@ -53,6 +57,11 @@ namespace TukitaSystem
         {
             if (points < 0) throw new ArgumentException("Cannot add negative points.");
             LoyaltyPoints += points;
+        }
+        
+        public void RemoveLink()
+        {
+            _customer = null;
         }
 
         public static List<LoyaltyCard> GetExtent()

@@ -22,6 +22,9 @@ namespace TukitaSystem
         private DateTime _birthDate;
         private decimal _baseSalary;
         private DateTime _employmentDate;
+        
+        [JsonIgnore]
+        public List<Shift> Shifts { get; private set; } = new();
 
         public Employee(string name, string surname, string passportNumber, DateTime birthDate, decimal baseSalary, DateTime employmentDate)
         {
@@ -144,6 +147,17 @@ namespace TukitaSystem
                 (passportNumber == null || e.PassportNumber.Equals(passportNumber, StringComparison.OrdinalIgnoreCase)) &&
                 (peselNumber == null || e.PeselNumber == peselNumber)
             ).ToList();
+        }
+        
+        public void AddShift(Shift shift)
+        {
+            if (!Shifts.Contains(shift))
+                Shifts.Add(shift);
+        }
+
+        public void RemoveShift(Shift shift)
+        {
+            Shifts.Remove(shift);
         }
 
         public static List<Employee> GetExtent()

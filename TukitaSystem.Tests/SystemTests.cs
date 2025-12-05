@@ -48,7 +48,8 @@ namespace TukitaSystem.Tests
         [Test]
         public void LoyaltyCard_AddPoints_IncreasesTotal()
         {
-            var card = new LoyaltyCard("123456", DateTime.Today, DateTime.Today.AddYears(1));
+            var customer = new Customer("Bob", "bob@example.com");
+            var card = new LoyaltyCard(customer, "123456", DateTime.Today, DateTime.Today.AddYears(1));
             card.AddPoints(50);
             card.AddPoints(25);
 
@@ -68,7 +69,7 @@ namespace TukitaSystem.Tests
             var start = new TimeSpan(14, 0, 0);
             var end = new TimeSpan(10, 0, 0);
 
-            Assert.Throws<ArgumentException>(() => new Shift(ShiftType.Morning, DateTime.Today, start, end, cashier));
+            Assert.Throws<ArgumentException>(() => new Shift(ShiftType.Morning, DateTime.Today, start, end, new List<Employee> { cashier }));
         }
 
         [Test]

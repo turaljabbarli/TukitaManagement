@@ -12,29 +12,30 @@ namespace TukitaSystem
         private TimeSpan _startAt;
         private TimeSpan _endAt;
         private double? _hoursWorked;
+        
+        public ShiftType Type { get; set; }
+        public DateTime Date { get; set; }
+        public bool IsPresent { get; set; }
+        public List<Employee> Employees { get; private set; } = new();
 
-        public Shift(ShiftType type, DateTime date, TimeSpan startAt, TimeSpan endAt, Employee assignedEmployee)
+        public Shift(ShiftType type, DateTime date, TimeSpan startAt, TimeSpan endAt, List<Employee> assignedEmployees)
         {
+            if (assignedEmployees == null || assignedEmployees.Count == 0)
+                throw new ArgumentException("A shift must have at least one assigned employee.");
+            
             if (endAt <= startAt)
                 throw new ArgumentException("End time must be after start time.");
-
-            if (assignedEmployee == null)
-                throw new ArgumentNullException(nameof(assignedEmployee), "Shift must be assigned to an employee.");
 
             Type = type;
             Date = date;
             StartAt = startAt;
             EndAt = endAt;
-            AssignedEmployee = assignedEmployee;
             IsPresent = false;
+            foreach (var e in assignedEmployees)
+                AddEmployee(e);
 
             _extent.Add(this);
         }
-
-        public ShiftType Type { get; set; }
-        public DateTime Date { get; set; }
-        public Employee AssignedEmployee { get; set; }
-        public bool IsPresent { get; set; }
 
         public TimeSpan StartAt
         {
@@ -70,6 +71,26 @@ namespace TukitaSystem
         }
 
         public double ScheduledDuration => (EndAt - StartAt).TotalHours;
+        
+        public void AddEmployee(Employee employee)
+        {
+            if (!Employees.Contains(employee))
+            {
+                Employees.Add(employee);
+                employee.AddShift(this);
+            }
+        }
+        
+        public void RemoveEmployee(Employee employee)
+        {
+            if (Employees.Count <= 1)
+                throw new InvalidOperationException("A shift must have at least one employee.");
+
+            if (Employees.Remove(employee))
+            {
+                employee.RemoveShift(this);
+            }
+        }
 
         public static List<Shift> GetExtent()
         {

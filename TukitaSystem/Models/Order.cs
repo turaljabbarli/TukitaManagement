@@ -7,11 +7,15 @@ namespace TukitaSystem
     public class Order
     {
         private static List<Order> _extent = new List<Order>();
-        private static readonly string FilePath = "orders.json";
-
-        private Dictionary<MenuItem, int> _items;
+        private List<OrderDetail> _orderDetails;
         private Cashier _cashier;
         private Customer _customer;
+        
+        public DateTime TimeAdded { get; private set; }
+        public OrderStatusType StatusType { get; set; }
+        public Cashier Cashier { get => _cashier; set => _cashier = value; }
+        public Customer Customer { get => _customer; set => _customer = value; }
+        public IReadOnlyCollection<OrderDetail> OrderDetails => _orderDetails.AsReadOnly();
 
         public Order(Cashier cashier, Customer customer)
         {
@@ -22,77 +26,44 @@ namespace TukitaSystem
             Customer = customer;
             TimeAdded = DateTime.Now;
             StatusType = OrderStatusType.Confirmed;
-            _items = new Dictionary<MenuItem, int>();
+            _orderDetails = new List<OrderDetail>();
 
             _extent.Add(this);
         }
-
-        public DateTime TimeAdded { get; private set; }
-        public OrderStatusType StatusType { get; set; }
-
-        public Cashier Cashier
-        {
-            get => _cashier;
-            set
-            {
-                if (value == null) throw new ArgumentNullException(nameof(value));
-                _cashier = value;
-            }
-        }
-
-        public Customer Customer
-        {
-            get => _customer;
-            set
-            {
-                if (value == null) throw new ArgumentNullException(nameof(value));
-                _customer = value;
-            }
-        }
-
-        public Dictionary<MenuItem, int> Items => new Dictionary<MenuItem, int>(_items);
-
+        
         public void AddItem(MenuItem item, int quantity)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
             if (quantity <= 0) throw new ArgumentException("Quantity must be positive.");
 
-            if (_items.ContainsKey(item))
+            var existingDetail = _orderDetails.FirstOrDefault(od => od.MenuItem == item);
+            if (existingDetail != null)
             {
-                _items[item] += quantity;
+                existingDetail.Quantity += quantity;
             }
             else
             {
-                _items.Add(item, quantity);
+                new OrderDetail(this, item, quantity);
             }
-        }
-
-        public decimal FinalPrice
-        {
-            get
-            {
-                decimal total = 0;
-                foreach (var entry in _items)
-                {
-                    total += entry.Key.Price * entry.Value;
-                }
-                return total;
-            }
-        }
-
-        public static List<Order> GetExtent()
-        {
-            return new List<Order>(_extent);
         }
         
-        /*public static void SaveExtent()
+        public void AddOrderDetail(OrderDetail detail)
         {
-            StorageService.Save(_extent, FilePath);
+            if (detail != null && !_orderDetails.Contains(detail))
+            {
+                _orderDetails.Add(detail);
+            }
         }
 
-        public static void LoadExtent()
+        public void RemoveOrderDetail(OrderDetail detail)
         {
-            _extent = StorageService.Load<Order>(FilePath);
-        }*/
+            if (detail != null && _orderDetails.Contains(detail))
+            {
+                _orderDetails.Remove(detail);
+            }
+        }
+
+        public decimal FinalPrice => _orderDetails.Sum(od => od.MenuItem.Price * od.Quantity);
+        public static List<Order> GetExtent() => new List<Order>(_extent);
     }
 }

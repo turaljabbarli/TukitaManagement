@@ -10,6 +10,10 @@ namespace TukitaSystem
         private string _name;
         private TimeSpan _startTime;
         private TimeSpan _endTime;
+        private string _servingTime;
+        
+        private Dictionary<string, MenuItem> _qualifiedItems = new Dictionary<string, MenuItem>();
+        public IReadOnlyDictionary<string, MenuItem> QualifiedItems => _qualifiedItems;
 
         public Menu(string name, TimeSpan startTime, TimeSpan endTime)
         {
@@ -60,10 +64,38 @@ namespace TukitaSystem
                 _endTime = value;
             }
         }
-
-        public string ServingInterval()
+        
+        public string ServingTime
         {
-            return $"{StartTime:hh\\:mm} - {EndTime:hh\\:mm}";
+            get
+            {
+                return $"{StartTime:hh\\:mm} - {EndTime:hh\\:mm}";
+            }
+        }
+
+        public void AddMenuItem(MenuItem item)
+        {
+            if (item == null) throw new ArgumentNullException(nameof(item));
+            if (_qualifiedItems.ContainsKey(item.Name))
+                throw new InvalidOperationException($"Menu already contains an item with name '{item.Name}'.");
+
+            _qualifiedItems[item.Name] = item;
+            item.AddMenu(this);
+        }
+
+        public bool GetItem(string name, out MenuItem item)
+        {
+            return _qualifiedItems.TryGetValue(name, out item);
+        }
+
+        public void RemoveMenuItem(MenuItem item)
+        {
+            if (item == null) return;
+            if (_qualifiedItems.ContainsKey(item.Name))
+            {
+                _qualifiedItems.Remove(item.Name);
+                item.RemoveMenu(this);
+            }
         }
         
         public static List<Menu> GetExtent()

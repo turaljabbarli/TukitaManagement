@@ -10,6 +10,8 @@ namespace TukitaSystem
 
         private string _name;
         private string _email;
+        private LoyaltyCard? _loyaltyCard;
+        public LoyaltyCard? LoyaltyCard => _loyaltyCard;
 
         public Customer(string name, string email)
         {
@@ -41,12 +43,22 @@ namespace TukitaSystem
                 _email = value;
             }
         }
-        
-        public LoyaltyCard? LoyaltyCard { get; set; }
 
-        public void AssignLoyaltyCard(LoyaltyCard card)
+        public void CreateLoyaltyCard(string cardNumber, DateTime expiryDate)
         {
-            LoyaltyCard = card ?? throw new ArgumentNullException(nameof(card));
+            if (_loyaltyCard != null)
+                throw new InvalidOperationException("Customer already has a loyalty card.");
+            
+            _loyaltyCard = new LoyaltyCard(this, cardNumber, DateTime.Now, expiryDate);
+        }
+
+        public void RemoveLoyaltyCard()
+        {
+            if (_loyaltyCard != null)
+            {
+                _loyaltyCard.RemoveLink();
+                _loyaltyCard = null;
+            }
         }
 
         public static List<Customer> GetExtent()

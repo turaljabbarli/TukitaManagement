@@ -19,6 +19,11 @@ namespace TukitaSystem
         private decimal _price;
         private int _calories;
         private string _preparationTime;
+        public bool IsAvailable { get; set; }
+        private HashSet<Menu> _menus = new HashSet<Menu>();
+        private HashSet<OrderDetail> _orderDetails = new HashSet<OrderDetail>();
+        public IReadOnlyCollection<Menu> Menus => _menus.ToList();
+        public IReadOnlyCollection<OrderDetail> OrderDetails => _orderDetails.ToList();
 
         public MenuItem(string name, decimal price, int calories, string preparationTime)
         {
@@ -30,8 +35,6 @@ namespace TukitaSystem
 
             _extent.Add(this);
         }
-
-        public bool IsAvailable { get; set; }
         public string Name
         {
             get => _name;
@@ -93,11 +96,45 @@ namespace TukitaSystem
             return _extent.FirstOrDefault(item => 
                 item.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
-        
-        public void AddItemToOrder(List<MenuItem> order)
+
+        public void AddMenu(Menu menu)
         {
-            if (IsAvailable)
-                order.Add(this);
+            if (menu == null) return;
+            if (_menus.Contains(menu))
+                return;
+
+            _menus.Add(menu);
+            if (!menu.QualifiedItems.ContainsKey(this.Name))
+                menu.AddMenuItem(this);
+        }
+
+        public void RemoveMenu(Menu menu)
+        {
+            if (menu == null) return;
+
+            if (!_menus.Contains(menu))
+                return;
+
+            _menus.Remove(menu);
+
+            if (menu.QualifiedItems.ContainsKey(this.Name))
+                menu.RemoveMenuItem(this);
+        }
+
+        public void AddOrderDetail(OrderDetail detail)
+        {
+            if (detail != null && !_orderDetails.Contains(detail))
+            {
+                _orderDetails.Add(detail);
+            }
+        }
+
+        public void RemoveOrderDetail(OrderDetail detail)
+        {
+            if (detail != null && _orderDetails.Contains(detail))
+            {
+                _orderDetails.Remove(detail);
+            }
         }
         
         public void AddIngredient(Ingredient ingredient, int quantity)
