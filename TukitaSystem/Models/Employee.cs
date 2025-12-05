@@ -147,11 +147,13 @@ namespace TukitaSystem
                 (peselNumber == null || e.PeselNumber == peselNumber)
             ).ToList();
         }
-        
+
         public void AddShift(Shift shift)
         {
-            if (!Shifts.Contains(shift))
+            if (!Shifts.Contains(shift)){
                 Shifts.Add(shift);
+                shift.AddEmployee(this);
+            }
         }
 
         public void RemoveShift(Shift shift)
