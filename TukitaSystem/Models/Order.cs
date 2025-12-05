@@ -62,6 +62,8 @@ namespace TukitaSystem
                 _orderDetails.Remove(detail);
             }
         }
+        
+        
 
         public decimal FinalPrice => _orderDetails.Sum(od => od.MenuItem.Price * od.Quantity);
         public static List<Order> GetExtent() => new List<Order>(_extent);

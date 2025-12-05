@@ -19,7 +19,7 @@ namespace TukitaSystem
             _quantity = quantity;
             
             _order.AddOrderDetail(this);
-            _menuItem.AddOrderDetail(this);
+            
         }
 
         public Order Order => _order;

@@ -6,8 +6,7 @@ public class QualifiedAssociationTests
     public void AddMenuItem_ShouldStoreItemByName()
     {
         var menu = new Menu("Breakfast", TimeSpan.FromHours(6), TimeSpan.FromHours(11));
-        var patties = new List<PattyType> { PattyType.Beef };
-        var burger = new Burger("Burger", 10.0m, 800, "10-15 minutes", patties);
+        var burger = new Burger("Burger", 10.0m, 800, "10-15 minutes", new List<PattyType> { PattyType.Beef });
 
         menu.AddMenuItem(burger);
 

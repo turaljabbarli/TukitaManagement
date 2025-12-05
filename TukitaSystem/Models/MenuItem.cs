@@ -21,9 +21,9 @@ namespace TukitaSystem
         private string _preparationTime;
         public bool IsAvailable { get; set; }
         private HashSet<Menu> _menus = new HashSet<Menu>();
-        private HashSet<OrderDetail> _orderDetails = new HashSet<OrderDetail>();
+        
         public IReadOnlyCollection<Menu> Menus => _menus.ToList();
-        public IReadOnlyCollection<OrderDetail> OrderDetails => _orderDetails.ToList();
+        
         
         private readonly HashSet<Ingredient> _ingredients = new HashSet<Ingredient>();
         public IReadOnlyCollection<Ingredient> Ingredients => _ingredients;
@@ -122,21 +122,7 @@ namespace TukitaSystem
                 menu.RemoveMenuItem(this);
         }
 
-        public void AddOrderDetail(OrderDetail detail)
-        {
-            if (detail != null && !_orderDetails.Contains(detail))
-            {
-                _orderDetails.Add(detail);
-            }
-        }
-
-        public void RemoveOrderDetail(OrderDetail detail)
-        {
-            if (detail != null && _orderDetails.Contains(detail))
-            {
-                _orderDetails.Remove(detail);
-            }
-        }
+        
         
         public void AddIngredient(Ingredient ingredient)
         {
