@@ -5,7 +5,7 @@ namespace TukitaSystem
 {
     public class Ingredient
     {
-        private static List<Ingredient> _extend = new List<Ingredient>();
+        private static List<Ingredient> _extent = new List<Ingredient>();
 
         private string _name;
         private int _currentStock;
@@ -20,7 +20,7 @@ namespace TukitaSystem
             IsVegetarian = isVegetarian;
             IsAllergic = isAllergic;
 
-            _extend.Add(this);
+            _extent.Add(this);
         }
 
         public string Name
@@ -45,9 +45,14 @@ namespace TukitaSystem
             }
         }
 
-        public static List<Ingredient> GetExtend()
+        public static List<Ingredient> GetExtent()
         {
-            return new List<Ingredient>(_extend);
+            return new List<Ingredient>(_extent);
+        }
+        
+        public static void ClearExtent()
+        {
+            _extent.Clear();
         }
     }
 }

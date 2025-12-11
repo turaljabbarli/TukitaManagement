@@ -1,61 +1,68 @@
-﻿namespace TukitaSystem.Tests;
+﻿using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using TukitaSystem; // Required to access Models and Enums
 
-public class AggregationTests
+namespace TukitaSystem.Tests
 {
-    
-    private MenuItem item;
-    private Ingredient tomato;
-    private Ingredient cheese;
-    
-    [SetUp]
-    public void Setup()
+    public class AggregationTests
     {
-        var patties = new List<PattyType> { PattyType.Beef };
-        item = new Burger("Beef King", 15.0m, 800, "10-15 minutes", patties);
-        cheese = new Ingredient("Cheese", 10, false, false);
-        tomato = new Ingredient("Tomato", 20, true, false);
-    }
-    
-    [Test]
-    public void AddIngredient_ShouldAdd()
-    {
-        item.AddIngredient(cheese);
+        private MenuItem item;
+        private Ingredient tomato;
+        private Ingredient cheese;
+        
+        [SetUp]
+        public void Setup()
+        {
+            var patties = new List<PattyType> { PattyType.Beef };
+            // Burger, Ingredient, and PattyType require the TukitaSystem namespace
+            item = new Burger("Beef King", 15.0m, 800, "10-15 minutes", patties);
+            cheese = new Ingredient("Cheese", 10, false, false);
+            tomato = new Ingredient("Tomato", 20, true, false);
+        }
+        
+        [Test]
+        public void AddIngredient_ShouldAdd()
+        {
+            item.AddIngredient(cheese);
 
-        Assert.AreEqual(1, item.Ingredients.Count);
-        Assert.IsTrue(item.Ingredients.Contains(cheese));
-    }
+            Assert.AreEqual(1, item.Ingredients.Count);
+            Assert.IsTrue(item.Ingredients.Contains(cheese));
+        }
 
-    [Test]
-    public void AddIngredient_ShouldIgnoreDuplicate()
-    {
-        item.AddIngredient(cheese);
-        item.AddIngredient(cheese);
+        [Test]
+        public void AddIngredient_ShouldIgnoreDuplicate()
+        {
+            item.AddIngredient(cheese);
+            item.AddIngredient(cheese);
 
-        Assert.AreEqual(1, item.Ingredients.Count);
-    }
+            Assert.AreEqual(1, item.Ingredients.Count);
+        }
 
-    [Test]
-    public void AddIngredient_Null_ShouldThrow()
-    {
-        Assert.Throws<ArgumentNullException>(() => item.AddIngredient(null));
-    }
+        [Test]
+        public void AddIngredient_Null_ShouldThrow()
+        {
+            Assert.Throws<ArgumentNullException>(() => item.AddIngredient(null));
+        }
 
-    [Test]
-    public void RemoveIngredient_ShouldRemove()
-    {
-        item.AddIngredient(cheese);
+        [Test]
+        public void RemoveIngredient_ShouldRemove()
+        {
+            item.AddIngredient(cheese);
 
-        bool removed = item.RemoveIngredient(cheese);
+            // This requires MenuItem.RemoveIngredient to return bool
+            bool removed = item.RemoveIngredient(cheese);
 
-        Assert.IsTrue(removed);
-        Assert.AreEqual(0, item.Ingredients.Count);
-    }
+            Assert.IsTrue(removed);
+            Assert.AreEqual(0, item.Ingredients.Count);
+        }
 
-    [Test]
-    public void RemoveIngredient_NotPresent_ShouldReturnFalse()
-    {
-        bool result = item.RemoveIngredient(tomato);
+        [Test]
+        public void RemoveIngredient_NotPresent_ShouldReturnFalse()
+        {
+            bool result = item.RemoveIngredient(tomato);
 
-        Assert.IsFalse(result);
+            Assert.IsFalse(result);
+        }
     }
 }

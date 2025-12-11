@@ -40,7 +40,13 @@ namespace TukitaSystem
         public string? PeselNumber
         {
             get => _peselNumber;
-            set => _peselNumber = value;
+            set
+            {
+                if (!IsValidPesel(value))
+                    throw new ArgumentException($"Invalid PESEL number: {value}");
+                
+                _peselNumber = value;
+            }
         }
 
         public string Name
@@ -148,17 +154,40 @@ namespace TukitaSystem
             ).ToList();
         }
 
+        // --- STRICT RECURSION GUARD IMPLEMENTATION (From Image 1) ---
+
         public void AddShift(Shift shift)
         {
-            if (!Shifts.Contains(shift)){
-                Shifts.Add(shift);
-                shift.AddEmployee(this);
+            if (shift == null) throw new ArgumentNullException(nameof(shift));
+
+            // 1. Check (Recursion Guard)
+            if (Shifts.Contains(shift))
+            {
+                return; 
             }
+
+            // 2. Add Locally
+            Shifts.Add(shift);
+
+            // 3. Trigger Reverse Connection
+            shift.AddEmployee(this);
         }
 
         public void RemoveShift(Shift shift)
         {
+            if (shift == null) throw new ArgumentNullException(nameof(shift));
+
+            // 1. Check (Guard)
+            if (!Shifts.Contains(shift))
+            {
+                return;
+            }
+
+            // 2. Remove Locally
             Shifts.Remove(shift);
+
+            // 3. Trigger Reverse Connection
+            shift.RemoveEmployee(this);
         }
 
         public static List<Employee> GetExtent()
@@ -179,6 +208,32 @@ namespace TukitaSystem
         public static void LoadExtent()
         {
             _extent = StorageService.Load<Employee>(FilePath);
+        }
+
+        private bool IsValidPesel(string? pesel)
+        {
+            // Optional attribute, so null is valid
+            if (pesel == null) return true;
+
+            // Must be exactly 11 characters
+            if (pesel.Length != 11) return false;
+
+            // Must contain only digits
+            if (!pesel.All(char.IsDigit)) return false;
+
+            // Checksum validation
+            int[] weights = { 1, 3, 7, 9, 1, 3, 7, 9, 1, 3 };
+            int sum = 0;
+
+            for (int i = 0; i < 10; i++)
+            {
+                sum += (pesel[i] - '0') * weights[i];
+            }
+
+            int lastDigit = sum % 10;
+            int checkDigit = (10 - lastDigit) % 10;
+
+            return checkDigit == (pesel[10] - '0');
         }
     }
 }

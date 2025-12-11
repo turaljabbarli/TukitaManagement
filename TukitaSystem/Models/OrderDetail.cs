@@ -8,6 +8,7 @@ namespace TukitaSystem
         private MenuItem _menuItem;
         private int _quantity;
 
+        // The Association Class links Order and MenuItem
         public OrderDetail(Order order, MenuItem menuItem, int quantity)
         {
             if (order == null) throw new ArgumentNullException(nameof(order));
@@ -18,8 +19,12 @@ namespace TukitaSystem
             _menuItem = menuItem;
             _quantity = quantity;
             
+            // Trigger the connection on the Order side
             _order.AddOrderDetail(this);
             
+            // Note: If MenuItem needed a list of OrderDetails (to track sales), we would call:
+            // _menuItem.AddOrderDetail(this);
+            // But MenuItem.cs provided doesn't have that list, so we skip it.
         }
 
         public Order Order => _order;
