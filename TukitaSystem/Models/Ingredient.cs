@@ -1,5 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
 
 namespace TukitaSystem
 {
@@ -10,6 +8,10 @@ namespace TukitaSystem
         private string _name;
         private int _currentStock;
         
+        private HashSet<MenuItem> _usedInItems = new HashSet<MenuItem>();
+        
+        public IReadOnlyCollection<MenuItem> UsedInItems => _usedInItems.ToList();
+
         public bool IsVegetarian { get; set; }
         public bool IsAllergic { get; set; }
 
@@ -43,6 +45,31 @@ namespace TukitaSystem
                     throw new ArgumentException("Stock cannot be negative.");
                 _currentStock = value;
             }
+        }
+
+
+        public void AddMenuItem(MenuItem item)
+        {
+            if (item == null) throw new ArgumentNullException(nameof(item));
+
+            if (_usedInItems.Contains(item))
+                return;
+
+            _usedInItems.Add(item);
+
+            item.AddIngredient(this);
+        }
+
+        public bool RemoveMenuItem(MenuItem item)
+        {
+            if (item == null || !_usedInItems.Contains(item))
+                return false;
+
+            _usedInItems.Remove(item);
+
+            item.RemoveIngredient(this);
+            
+            return true;
         }
 
         public static List<Ingredient> GetExtend()
