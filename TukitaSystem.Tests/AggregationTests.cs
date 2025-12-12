@@ -1,4 +1,4 @@
-﻿namespace TukitaSystem.Tests;
+namespace TukitaSystem.Tests;
 
 public class AggregationTests
 {
@@ -58,4 +58,23 @@ public class AggregationTests
 
         Assert.IsFalse(result);
     }
+    
+    [Test]
+    public void AddIngredient_ShouldSetReverseConnection()
+    {
+        item.AddIngredient(cheese);
+    
+        Assert.IsTrue(cheese.UsedInItems.Contains(item));
+    }
+
+    [Test]
+    public void RemoveIngredient_ShouldRemoveReverseConnection()
+    {
+        item.AddIngredient(cheese);
+        item.RemoveIngredient(cheese);
+
+        Assert.AreEqual(0, item.Ingredients.Count);
+        Assert.AreEqual(0, cheese.UsedInItems.Count);
+    }
+    
 }
