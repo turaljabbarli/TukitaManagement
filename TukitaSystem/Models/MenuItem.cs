@@ -105,24 +105,26 @@ namespace TukitaSystem
 
         public void AddMenu(Menu menu)
         {
+            if (menu == null) throw new ArgumentNullException(nameof(menu));
+            
             if (_menus.Contains(menu))
                 return;
 
             _menus.Add(menu);
-            if (!menu.QualifiedItems.ContainsKey(this.Name))
-                menu.AddMenuItem(this);
+            
+            menu.AddMenuItem(this);
         }
 
         public void RemoveMenu(Menu menu)
         {
+            if (menu == null) return;
 
             if (!_menus.Contains(menu))
                 return;
 
             _menus.Remove(menu);
 
-            if (menu.QualifiedItems.ContainsKey(this.Name))
-                menu.RemoveMenuItem(this);
+            menu.RemoveMenuItem(this);
         }
         
         public void AddIngredient(Ingredient ingredient)
