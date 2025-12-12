@@ -10,7 +10,7 @@ namespace TukitaSystem
 
         private string _cardNumber;
         private int _loyaltyPoints;
-        private Customer _customer;
+        private Customer _customer; // Владелец обязателен
         
         public Customer Customer => _customer;
         public DateTime CreationDate { get; set; }
@@ -23,6 +23,13 @@ namespace TukitaSystem
                 throw new ArgumentException("Expiry date must be after creation date.");
 
             _customer = customer;
+            
+            // === REVERSE CONNECTION ===
+            // Мы принудительно устанавливаем эту карту клиенту.
+            // Теперь даже если создать карту через "new LoyaltyCard(...)", 
+            // у клиента поле LoyaltyCard обновится автоматически.
+            _customer.SetLoyaltyCard(this);
+
             CardNumber = cardNumber;
             CreationDate = creationDate;
             ExpiryDate = expiryDate;
@@ -31,13 +38,13 @@ namespace TukitaSystem
             _extent.Add(this);
         }
 
+        // ... CardNumber, LoyaltyPoints, AddPoints без изменений ...
         public string CardNumber
         {
             get => _cardNumber;
             set
             {
-                if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("Card number cannot be empty.");
+                if (string.IsNullOrWhiteSpace(value)) throw new ArgumentException("Card number cannot be empty.");
                 _cardNumber = value;
             }
         }
@@ -47,8 +54,7 @@ namespace TukitaSystem
             get => _loyaltyPoints;
             set
             {
-                if (value < 0)
-                    throw new ArgumentException("Loyalty points cannot be negative.");
+                if (value < 0) throw new ArgumentException("Loyalty points cannot be negative.");
                 _loyaltyPoints = value;
             }
         }
@@ -58,25 +64,23 @@ namespace TukitaSystem
             if (points < 0) throw new ArgumentException("Cannot add negative points.");
             LoyaltyPoints += points;
         }
+
+        public static List<LoyaltyCard> GetExtent() => new List<LoyaltyCard>(_extent);
         
-        public void RemoveLink()
+        public void Destroy()
         {
+            // === REVERSE CONNECTION ===
+            // Перед смертью убираем ссылку на себя у владельца
+            if (_customer != null)
+            {
+                _customer.SetLoyaltyCard(null);
+            }
+            
             _customer = null;
-        }
-
-        public static List<LoyaltyCard> GetExtent()
-        {
-            return new List<LoyaltyCard>(_extent);
+            _extent.Remove(this);
         }
         
-        public static void SaveExtent()
-        {
-            StorageService.Save(_extent, FilePath);
-        }
-
-        public static void LoadExtent()
-        {
-            _extent = StorageService.Load<LoyaltyCard>(FilePath);
-        }
+        public static void SaveExtent() => StorageService.Save(_extent, FilePath);
+        public static void LoadExtent() => _extent = StorageService.Load<LoyaltyCard>(FilePath);
     }
 }
