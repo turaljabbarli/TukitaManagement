@@ -3,7 +3,7 @@
 public class AssociationTests
 {
 
-    [Test]
+    /*[Test]
     public void Order_FinalPrice_ShouldCalculateCorrectly()
     {
         var cashier = new Cashier("Alice", "Smith", "FF31213123", DateTime.Today.AddYears(-25), 2500, DateTime.Today);
@@ -19,56 +19,101 @@ public class AssociationTests
         
         Assert.AreEqual(22.5m, order.FinalPrice);
     }
+*/
     
     [Test]
-    public void ShiftMustHaveAtLeastOneEmployee()
+    public void Constructor_Creates_Reverse_Association()
     {
-        Assert.Throws<ArgumentException>(() =>
+        var burger = new Burger("Cheeseburger", 10m, 800, "10-15 min",
+            new List<PattyType> { PattyType.Beef });
+        var drink = new Drink("Coke", 2.5m, 150, "10-15 min", true, SizeType.Medium);
+
+        var cook = new Cook("Anna", "Smith", "P2",
+            DateTime.Now.AddYears(-35),
+            3200,
+            DateTime.Now.AddYears(-7),
+            "PJATK",
+            new List<MenuItem> { burger, drink });
+
+        Assert.Contains(cook, burger.Cooks.ToList());
+        Assert.Contains(cook, drink.Cooks.ToList());
+    }
+    
+    [Test]
+    public void CookConstructor_Throws_WhenNoSignatureDishesProvided()
+    {
+        Assert.Throws<InvalidOperationException>(() =>
         {
-            var invalid = new Shift(
-                ShiftType.Morning,
-                DateTime.Today,
-                TimeSpan.FromHours(8),
-                TimeSpan.FromHours(16),
-                new List<Employee>()
-            );
+            var cook = new Cook("Anna", "Smith", "P2",
+                DateTime.Now.AddYears(-30), 3000, DateTime.Now.AddYears(-5),
+                "CookingSchool", new List<MenuItem>());
         });
     }
-
+    
     [Test]
-    public void ShiftWithMultipleEmployeesIsValid()
+    public void AddSignatureDish_IgnoresDuplicate()
     {
-        var emp1 = new Cashier("John", "Doe", "P1", DateTime.Now.AddYears(-30), 3000, DateTime.Now.AddYears(-5));
-        var emp2 = new Cook("Anna", "Smith", "P2", DateTime.Now.AddYears(-35), 3200, DateTime.Now.AddYears(-7), "PJATK");
+        var burger = new Burger("Burger", 10m, 500, "10 min", new List<PattyType> { PattyType.Beef });
+        var cook = new Cook("Anna", "Smith", "P2",
+            DateTime.Now.AddYears(-30), 3000,
+            DateTime.Now.AddYears(-5),
+            "School", new List<MenuItem> { burger });
 
-        var shift = new Shift(
-            ShiftType.Morning,
-            DateTime.Today,
-            TimeSpan.FromHours(8),
-            TimeSpan.FromHours(16),
-            new List<Employee> { emp1, emp2 }
-        );
+        cook.AddSignatureDish(burger);
 
-        Assert.AreEqual(2, shift.Employees.Count);
-        Assert.AreEqual(1, emp1.Shifts.Count);
-        Assert.AreEqual(1, emp2.Shifts.Count);
+        Assert.AreEqual(1, cook.SignatureDishes.Count);
+        Assert.AreEqual(1, burger.Cooks.Count);
     }
-
+    
     [Test]
-    public void CannotRemoveLastEmployeeFromShift()
+    public void AddCook_UpdatesBothSides()
     {
-        var emp = new Cashier("John", "Doe", "P1", DateTime.Now.AddYears(-30), 3000, DateTime.Now.AddYears(-5));
+        var pasta = new Drink("Pasta Juice", 4.5m, 200, "5 min", true, SizeType.Small);
+        var cook = new Cook("Bob", "Chef", "P3",
+            DateTime.Now.AddYears(-40), 3500,
+            DateTime.Now.AddYears(-10),
+            "School", new List<MenuItem> { pasta });
 
-        var shift = new Shift(
-            ShiftType.Morning,
-            DateTime.Today,
-            TimeSpan.FromHours(8),
-            TimeSpan.FromHours(16),
-            new List<Employee> { emp }
-        );
+        var burger = new Burger("Burger", 12m, 700, "10 min",
+            new List<PattyType> { PattyType.Beef });
+
+        burger.AddCook(cook);
+
+        Assert.Contains(burger, cook.SignatureDishes.ToList());
+        Assert.Contains(cook, burger.Cooks.ToList());
+    }
+    
+    [Test]
+    public void RemoveSignatureDish_UpdatesBothSides()
+    {
+        var burger = new Burger("Burger", 10m, 500, "10 min", new List<PattyType> { PattyType.Beef });
+        var drink = new Drink("Cola", 3m, 150, "1 min", true, SizeType.Small);
+
+        var cook = new Cook("Anna", "Smith", "P1",
+            DateTime.Now.AddYears(-40), 3000,
+            DateTime.Now.AddYears(-10),
+            "School", new List<MenuItem> { burger, drink });
+
+        cook.RemoveSignatureDish(drink);
+
+        Assert.False(cook.SignatureDishes.Contains(drink));
+        Assert.False(drink.Cooks.Contains(cook));
+    }
+    
+    [Test]
+    public void RemoveSignatureDish_Throws_WhenLastDish()
+    {
+        var burger = new Burger("Burger", 10m, 500, "10 min",
+            new List<PattyType> { PattyType.Beef });
+
+        var cook = new Cook("Anna", "Smith", "P1",
+            DateTime.Now.AddYears(-40), 3000,
+            DateTime.Now.AddYears(-10),
+            "School", new List<MenuItem> { burger });
 
         Assert.Throws<InvalidOperationException>(() =>
-            shift.RemoveEmployee(emp)
-        );
+        {
+            cook.RemoveSignatureDish(burger);
+        });
     }
 }

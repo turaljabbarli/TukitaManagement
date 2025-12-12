@@ -16,16 +16,17 @@ namespace TukitaSystem
         public ShiftType Type { get; set; }
         public DateTime Date { get; set; }
         public bool IsPresent { get; set; }
-        public List<Employee> Employees { get; private set; } = new();
+        private readonly List<ShiftAssignment> _assignments = new();
+        public IReadOnlyList<ShiftAssignment> Assignments => _assignments.AsReadOnly();
         public double ScheduledDuration => (EndAt - StartAt).TotalHours;
 
         public Shift(ShiftType type, DateTime date, TimeSpan startAt, TimeSpan endAt, List<Employee> assignedEmployees)
         {
             if (assignedEmployees == null || assignedEmployees.Count == 0)
-                throw new ArgumentException("A shift must have at least one assigned employee.");
+                throw new ArgumentException("A shift must have at least one assigned employee");
             
             if (endAt <= startAt)
-                throw new ArgumentException("End time must be after start time.");
+                throw new ArgumentException("End time must be after start time");
 
             Type = type;
             Date = date;
@@ -33,7 +34,7 @@ namespace TukitaSystem
             EndAt = endAt;
             IsPresent = false;
             foreach (var e in assignedEmployees)
-                AddEmployee(e);
+                new ShiftAssignment(e, this, date, false, 0);
 
             _extent.Add(this);
         }
@@ -44,7 +45,7 @@ namespace TukitaSystem
             set
             {
                 if (value >= EndAt && EndAt != default)
-                    throw new ArgumentException("Start time must be before end time.");
+                    throw new ArgumentException("Start time must be before end time");
                 _startAt = value;
             }
         }
@@ -55,7 +56,7 @@ namespace TukitaSystem
             set
             {
                 if (value <= StartAt && StartAt != default)
-                    throw new ArgumentException("End time must be after start time.");
+                    throw new ArgumentException("End time must be after start time");
                 _endAt = value;
             }
         }
@@ -66,29 +67,29 @@ namespace TukitaSystem
             set
             {
                 if (value.HasValue && value.Value < 0)
-                    throw new ArgumentException("Hours worked cannot be negative.");
+                    throw new ArgumentException("Hours worked cannot be negative");
                 _hoursWorked = value;
             }
         }
         
-        public void AddEmployee(Employee employee)
+        public void AddAssignment(ShiftAssignment assignment)
         {
-            if (!Employees.Contains(employee))
-            {
-                Employees.Add(employee);
-                employee.AddShift(this);
-            }
-        }
-        
-        public void RemoveEmployee(Employee employee)
-        {
-            if (Employees.Count <= 1)
-                throw new InvalidOperationException("A shift must have at least one employee.");
+            if (_assignments.Contains(assignment))
+                throw new InvalidOperationException("Duplicate ShiftAssignment");
 
-            if (Employees.Remove(employee))
-            {
-                employee.RemoveShift(this);
-            }
+            _assignments.Add(assignment);
+        }
+
+        public void RemoveAssignment(ShiftAssignment assignment)
+        {
+            if (!_assignments.Contains(assignment))
+                throw new InvalidOperationException("Assignment not found");
+            
+            if (_assignments.Count == 1)
+                throw new InvalidOperationException(
+                    "Shift must have at least one ShiftAssignment");
+            
+            _assignments.Remove(assignment);
         }
 
         public static List<Shift> GetExtent()

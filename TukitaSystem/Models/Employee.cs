@@ -23,7 +23,8 @@ namespace TukitaSystem
         private decimal _baseSalary;
         private DateTime _employmentDate;
         
-        public List<Shift> Shifts { get; private set; } = new();
+        private readonly List<ShiftAssignment> _assignments = new();
+        public IReadOnlyList<ShiftAssignment> Assignments => _assignments.AsReadOnly();
 
         public Employee(string name, string surname, string passportNumber, DateTime birthDate, decimal baseSalary, DateTime employmentDate)
         {
@@ -49,7 +50,7 @@ namespace TukitaSystem
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("Name cannot be empty or whitespace.");
+                    throw new ArgumentException("Name cannot be empty or whitespace");
                 _name = value;
             }
         }
@@ -60,7 +61,7 @@ namespace TukitaSystem
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("Surname cannot be empty or whitespace.");
+                    throw new ArgumentException("Surname cannot be empty or whitespace");
                 _surname = value;
             }
         }
@@ -71,7 +72,7 @@ namespace TukitaSystem
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("Passport number cannot be empty or whitespace.");
+                    throw new ArgumentException("Passport number cannot be empty or whitespace");
                 _passportNumber = value;
             }
         }
@@ -82,7 +83,7 @@ namespace TukitaSystem
             set
             {
                 if (value > DateTime.Now)
-                    throw new ArgumentException("Birth date cannot be in the future.");
+                    throw new ArgumentException("Birth date cannot be in the future");
                 _birthDate = value;
             }
         }
@@ -93,7 +94,7 @@ namespace TukitaSystem
             set
             {
                 if (value < 0)
-                    throw new ArgumentException("Salary cannot be negative.");
+                    throw new ArgumentException("Salary cannot be negative");
                 _baseSalary = value;
             }
         }
@@ -104,7 +105,7 @@ namespace TukitaSystem
             set
             {
                 if (value > DateTime.Now)
-                    throw new ArgumentException("Employment date cannot be in the future.");
+                    throw new ArgumentException("Employment date cannot be in the future");
                 _employmentDate = value;
             }
         }
@@ -148,17 +149,20 @@ namespace TukitaSystem
             ).ToList();
         }
 
-        public void AddShift(Shift shift)
+        public void AddAssignment(ShiftAssignment assignment)
         {
-            if (!Shifts.Contains(shift)){
-                Shifts.Add(shift);
-                shift.AddEmployee(this);
-            }
+            if (_assignments.Contains(assignment))
+                throw new InvalidOperationException("Duplicate ShiftAssignment");
+
+            _assignments.Add(assignment);
         }
 
-        public void RemoveShift(Shift shift)
+        public void RemoveAssignment(ShiftAssignment assignment)
         {
-            Shifts.Remove(shift);
+            if (!_assignments.Contains(assignment))
+                throw new InvalidOperationException("Assignment not found");
+
+            _assignments.Remove(assignment);
         }
 
         public static List<Employee> GetExtent()
