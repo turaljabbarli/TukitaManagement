@@ -10,7 +10,7 @@ namespace TukitaSystem
 
         private string _cardNumber;
         private int _loyaltyPoints;
-        private Customer _customer; // Владелец обязателен
+        private Customer _customer;
         
         public Customer Customer => _customer;
         public DateTime CreationDate { get; set; }
@@ -24,10 +24,7 @@ namespace TukitaSystem
 
             _customer = customer;
             
-            // === REVERSE CONNECTION ===
-            // Мы принудительно устанавливаем эту карту клиенту.
-            // Теперь даже если создать карту через "new LoyaltyCard(...)", 
-            // у клиента поле LoyaltyCard обновится автоматически.
+            
             _customer.SetLoyaltyCard(this);
 
             CardNumber = cardNumber;
@@ -38,7 +35,7 @@ namespace TukitaSystem
             _extent.Add(this);
         }
 
-        // ... CardNumber, LoyaltyPoints, AddPoints без изменений ...
+        
         public string CardNumber
         {
             get => _cardNumber;
@@ -69,8 +66,7 @@ namespace TukitaSystem
         
         public void Destroy()
         {
-            // === REVERSE CONNECTION ===
-            // Перед смертью убираем ссылку на себя у владельца
+            
             if (_customer != null)
             {
                 _customer.SetLoyaltyCard(null);

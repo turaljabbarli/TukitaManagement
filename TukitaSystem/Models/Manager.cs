@@ -7,10 +7,8 @@ namespace TukitaSystem
     {
         private int _yearsOfExperience;
 
-        // 1. Переменная для обучения, где менеджер является СТУДЕНТОМ (только одна за раз)
         private Training? _studentTraining;
 
-        // 2. Список обучений, где менеджер является УЧИТЕЛЕМ (много трейнингов)
         private List<Training> _leadingTrainings = new List<Training>();
 
         public Manager(string name, string surname, string passportNumber, DateTime birthDate, decimal baseSalary, DateTime employmentDate, RankType rankType, int yearsOfExperience)
@@ -33,16 +31,13 @@ namespace TukitaSystem
             }
         }
 
-        // --- Логика Студента ---
 
         public Training? StudentTraining => _studentTraining;
 
         public void SetStudentTraining(Training? training)
         {
-            // Если тренинг тот же самый, ничего не делаем
             if (_studentTraining == training) return;
 
-            // Если уже есть активный тренинг, убираем себя из него (разрываем старую связь)
             if (_studentTraining != null)
             {
                 var oldTraining = _studentTraining;
@@ -52,14 +47,12 @@ namespace TukitaSystem
 
             _studentTraining = training;
 
-            // Настраиваем обратную связь в классе Training
             if (_studentTraining != null && _studentTraining.ManagerStudent != this)
             {
                 _studentTraining.SetManagerStudent(this);
             }
         }
 
-        // --- Логика Учителя (Lead) ---
 
         public IReadOnlyCollection<Training> LeadingTrainings => _leadingTrainings.AsReadOnly();
 
@@ -67,7 +60,6 @@ namespace TukitaSystem
         {
             if (training == null) throw new ArgumentNullException(nameof(training));
 
-            // Проверка ранга: только Lead может вести тренинги
             if (this.RankType != RankType.Lead)
             {
                 throw new InvalidOperationException("This manager does not have the 'Lead' rank and cannot conduct training.");
@@ -77,7 +69,6 @@ namespace TukitaSystem
             {
                 _leadingTrainings.Add(training);
 
-                // Обратная связь: говорим тренингу, кто его учитель
                 if (training.ManagerTeacher != this)
                 {
                     training.SetManagerTeacher(this);
@@ -93,7 +84,7 @@ namespace TukitaSystem
             {
                 _leadingTrainings.Remove(training);
 
-                // Обратная связь: убираем учителя у тренинга
+                
                 if (training.ManagerTeacher == this)
                 {
                     training.SetManagerTeacher(null);
