@@ -134,7 +134,12 @@ namespace TukitaSystem
                 throw new ArgumentNullException(nameof(ingredient));
             }
 
+            if (_ingredients.Contains(ingredient))
+                return;
+
             _ingredients.Add(ingredient);
+            
+            ingredient.AddMenuItem(this);
         }
         
         public bool RemoveIngredient(Ingredient ingredient)
@@ -142,7 +147,14 @@ namespace TukitaSystem
             if (ingredient == null)
                 return false;
 
-            return _ingredients.Remove(ingredient);
+            if (!_ingredients.Contains(ingredient))
+                return false;
+
+            _ingredients.Remove(ingredient);
+            
+            ingredient.RemoveMenuItem(this);
+
+            return true;
         }
         
         public void AddCook(Cook cook)
