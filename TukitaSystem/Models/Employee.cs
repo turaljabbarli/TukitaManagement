@@ -41,7 +41,13 @@ namespace TukitaSystem
         public string? PeselNumber
         {
             get => _peselNumber;
-            set => _peselNumber = value;
+            set
+            {
+                if (!IsValidPesel(value))
+                    throw new ArgumentException($"Invalid PESEL number: {value}");
+                
+                _peselNumber = value;
+            }
         }
 
         public string Name
@@ -183,6 +189,29 @@ namespace TukitaSystem
         public static void LoadExtent()
         {
             _extent = StorageService.Load<Employee>(FilePath);
+        }
+
+        private bool IsValidPesel(string? pesel)
+        {
+            
+            if (pesel == null) return true;
+
+            if (pesel.Length != 11) return false;
+
+            if (!pesel.All(char.IsDigit)) return false;
+
+            int[] weights = { 1, 3, 7, 9, 1, 3, 7, 9, 1, 3 };
+            int sum = 0;
+
+            for (int i = 0; i < 10; i++)
+            {
+                sum += (pesel[i] - '0') * weights[i];
+            }
+
+            int lastDigit = sum % 10;
+            int checkDigit = (10 - lastDigit) % 10;
+
+            return checkDigit == (pesel[10] - '0');
         }
     }
 }
