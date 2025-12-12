@@ -5,15 +5,26 @@ namespace TukitaSystem
 {
     public class Cook : Employee
     {
-        private string? _signatureDish;
         private List<string> _knownDishes;
         private string _education;
+        
+        private readonly List<MenuItem> _signatureDishes = new();
+        public IReadOnlyCollection<MenuItem> SignatureDishes => _signatureDishes.AsReadOnly();
 
-        public Cook(string name, string surname, string passportNumber, DateTime birthDate, decimal baseSalary, DateTime employmentDate, string education)
+        public Cook(string name, string surname, string passportNumber, DateTime birthDate, decimal baseSalary, DateTime employmentDate, string education, List<MenuItem> signatureDishes)
             : base(name, surname, passportNumber, birthDate, baseSalary, employmentDate)
         {
+
+            if (signatureDishes == null || signatureDishes.Count == 0)
+            {
+                throw new InvalidOperationException("Cook must have at least one signature dish");
+            }
+            
             Education = education;
             _knownDishes = new List<string>();
+            
+            foreach (var dish in signatureDishes)
+                AddSignatureDish(dish);
         }
 
         public string Education
@@ -23,7 +34,7 @@ namespace TukitaSystem
             {
                 if (value == null)
                 {
-                    throw new ArgumentException("Education cannot be null.");
+                    throw new ArgumentException("Education cannot be null");
                 }
                 _education = value;
             }
@@ -35,26 +46,36 @@ namespace TukitaSystem
             set
             {
                 if (value == null)
-                    throw new ArgumentNullException("Known dishes list cannot be null.");
+                    throw new ArgumentNullException("Known dishes list cannot be null");
                 _knownDishes = value;
             }
         }
 
-        public string? SignatureDish
+        public void AddSignatureDish(MenuItem item)
         {
-            get => _signatureDish;
-            set
-            {
-                if (value != null && string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("Signature dish cannot be empty if provided.");
-                _signatureDish = value;
-            }
+            if (_signatureDishes.Contains(item))
+                return;
+
+            _signatureDishes.Add(item);
+            item.AddCook(this);
+        }
+        
+        public void RemoveSignatureDish(MenuItem item)
+        {
+            if (!_signatureDishes.Contains(item))
+                return;
+
+            if (_signatureDishes.Count == 1)
+                throw new InvalidOperationException("Cannot remove the last signature dish. A cook must have at least one");
+
+            _signatureDishes.Remove(item);
+            item.RemoveCook(this);
         }
 
         public void AddDish(string dish)
         {
             if (string.IsNullOrWhiteSpace(dish))
-                throw new ArgumentException("Dish name cannot be empty.");
+                throw new ArgumentException("Dish name cannot be empty");
             _knownDishes.Add(dish);
         }
     }

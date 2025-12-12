@@ -27,6 +27,9 @@ namespace TukitaSystem
         
         private readonly HashSet<Ingredient> _ingredients = new HashSet<Ingredient>();
         public IReadOnlyCollection<Ingredient> Ingredients => _ingredients;
+        
+        private readonly List<Cook> _cooks = new();
+        public IReadOnlyCollection<Cook> Cooks => _cooks.AsReadOnly();
 
         public MenuItem(string name, decimal price, int calories, string preparationTime)
         {
@@ -121,8 +124,6 @@ namespace TukitaSystem
             if (menu.QualifiedItems.ContainsKey(this.Name))
                 menu.RemoveMenuItem(this);
         }
-
-        
         
         public void AddIngredient(Ingredient ingredient)
         {
@@ -140,6 +141,24 @@ namespace TukitaSystem
                 return false;
 
             return _ingredients.Remove(ingredient);
+        }
+        
+        public void AddCook(Cook cook)
+        {
+            if (_cooks.Contains(cook))
+                return;
+
+            _cooks.Add(cook);
+            cook.AddSignatureDish(this);
+        }
+        
+        public void RemoveCook(Cook cook)
+        {
+            if (!_cooks.Contains(cook))
+                return;
+
+            _cooks.Remove(cook);
+            cook.RemoveSignatureDish(this);
         }
 
         public static List<MenuItem> GetExtend()
