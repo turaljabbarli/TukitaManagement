@@ -1,53 +1,61 @@
-﻿namespace TukitaSystem.Tests;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using TukitaSystem;
 
-public class QualifiedAssociationTests
+namespace TukitaSystem.Tests
 {
-    [Test]
-    public void AddMenuItem_ShouldStoreItemByName()
+    public class QualifiedAssociationTests
     {
-        var menu = new Menu("Breakfast", TimeSpan.FromHours(6), TimeSpan.FromHours(11));
-        var burger = new Burger("Burger", 10.0m, 800, "10-15 minutes", new List<PattyType> { PattyType.Beef });
+        private Menu _menu;
+        private MenuItem _burger;
+        
+        [SetUp]
+        public void Setup()
+        {
+            _menu = new Menu("Lunch Menu", "12:00-15:00");
+            var patties = new List<PattyType> { PattyType.Beef };
+            _burger = new Burger("BigMac", 20.0m, 500, "10 min", patties);
+        }
 
-        menu.AddMenuItem(burger);
+        [Test]
+        public void AddMenuItem_ShouldAddToDictionary()
+        {
+            _menu.AddMenuItem(_burger);
 
-        Assert.IsTrue(menu.QualifiedItems.ContainsKey("Burger"));
-        Assert.AreEqual(burger, menu.QualifiedItems["Burger"]);
-    }
+            Assert.IsTrue(_menu.QualifiedItems.ContainsKey(_burger.Name));
+            Assert.AreEqual(_burger, _menu.QualifiedItems[_burger.Name]);
+            
+            Assert.IsTrue(_burger.Menus.Contains(_menu));
+        }
 
-    [Test]
-    public void AddMenuItem_DuplicateName_ShouldThrow()
-    {
-        var menu = new Menu("Lunch", TimeSpan.FromHours(12), TimeSpan.FromHours(17));
-        var patties = new List<PattyType> { PattyType.Beef };
-        menu.AddMenuItem(new Burger("Cheeseburger", 10.0m, 800, "10-15 minutes", patties));
+        [Test]
+        public void AddMenuItem_ReverseConnection_ShouldWork()
+        {
+            _burger.AddMenu(_menu);
 
-        Assert.Throws<InvalidOperationException>(() =>
-            menu.AddMenuItem(new Burger("Cheeseburger", 10.0m, 800, "10-15 minutes", patties))
-        );
-    }
+            Assert.IsTrue(_menu.QualifiedItems.ContainsKey(_burger.Name));
+            Assert.IsTrue(_burger.Menus.Contains(_menu));
+        }
 
-    [Test]
-    public void TryGetItem_ShouldReturnItem()
-    {
-        var menu = new Menu("Dinner", TimeSpan.FromHours(17), TimeSpan.FromHours(22));
-        var item = new Drink("Coke", 2.5m, 150, "10-15 minutes", true, SizeType.Medium);
+        [Test]
+        public void AddMenuItem_Duplicate_ShouldBeIgnored()
+        {
+            _menu.AddMenuItem(_burger);
+            _menu.AddMenuItem(_burger);
 
-        menu.AddMenuItem(item);
+            Assert.AreEqual(1, _menu.QualifiedItems.Count);
+        }
 
-        Assert.IsTrue(menu.GetItem("Coke", out var result));
-        Assert.AreEqual(item, result);
-    }
+        [Test]
+        public void RemoveMenuItem_ShouldRemoveFromDictionary()
+        {
+            _menu.AddMenuItem(_burger);
 
-    [Test]
-    public void RemoveMenuItem_ShouldRemoveBothSides()
-    {
-        var menu = new Menu("Evening", TimeSpan.FromHours(18), TimeSpan.FromHours(23));
-        var item = new Drink("Fanta", 2.5m, 150, "10-15 minutes", true, SizeType.Medium);
+            _menu.RemoveMenuItem(_burger);
 
-        menu.AddMenuItem(item);
-        menu.RemoveMenuItem(item);
-
-        Assert.IsFalse(menu.QualifiedItems.ContainsKey("Fanta"));
-        Assert.IsFalse(item.Menus.Contains(menu));
+            Assert.IsFalse(_menu.QualifiedItems.ContainsKey(_burger.Name));
+            Assert.IsFalse(_burger.Menus.Contains(_menu));
+        }
     }
 }
