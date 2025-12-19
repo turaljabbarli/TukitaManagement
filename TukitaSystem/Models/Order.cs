@@ -8,21 +8,46 @@ namespace TukitaSystem
     {
         private static List<Order> _extent = new List<Order>();
         private List<OrderDetail> _orderDetails;
-        private Cashier _cashier;
+        
+        // CHANGED: Cashier -> Employee
+        private Employee _cashier;
         private Customer _customer;
         
         public DateTime TimeAdded { get; private set; }
         public OrderStatusType StatusType { get; set; }
-        public Cashier Cashier { get => _cashier; set => _cashier = value; }
+
+        // CHANGED: Property type is Employee
+        public Employee Cashier 
+        { 
+            get => _cashier; 
+            set 
+            {
+                if (value == null) throw new ArgumentNullException(nameof(value));
+                // VALIDATION: Ensure the employee is actually a cashier
+                if (!(value.Role is CashierRole))
+                {
+                    throw new ArgumentException("Only an employee with the Cashier role can be assigned to an order.");
+                }
+                _cashier = value; 
+            }
+        }
+
         public Customer Customer { get => _customer; set => _customer = value; }
         public IReadOnlyCollection<OrderDetail> OrderDetails => _orderDetails.AsReadOnly();
 
-        public Order(Cashier cashier, Customer customer)
+        // CHANGED: Constructor accepts Employee
+        public Order(Employee cashier, Customer customer)
         {
             if (cashier == null) throw new ArgumentNullException(nameof(cashier));
             if (customer == null) throw new ArgumentNullException(nameof(customer));
 
-            Cashier = cashier;
+            // VALIDATION: Check role immediately upon creation
+            if (!(cashier.Role is CashierRole))
+            {
+                throw new ArgumentException("The employee creating the order must be a Cashier.");
+            }
+
+            _cashier = cashier;
             Customer = customer;
             TimeAdded = DateTime.Now;
             StatusType = OrderStatusType.Confirmed;
@@ -62,8 +87,6 @@ namespace TukitaSystem
                 _orderDetails.Remove(detail);
             }
         }
-        
-        
 
         public decimal FinalPrice => _orderDetails.Sum(od => od.MenuItem.Price * od.Quantity);
         public static List<Order> GetExtent() => new List<Order>(_extent);

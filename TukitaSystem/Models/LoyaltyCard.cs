@@ -24,7 +24,6 @@ namespace TukitaSystem
 
             _customer = customer;
             
-            
             _customer.SetLoyaltyCard(this);
 
             CardNumber = cardNumber;
@@ -35,7 +34,6 @@ namespace TukitaSystem
             _extent.Add(this);
         }
 
-        
         public string CardNumber
         {
             get => _cardNumber;
@@ -66,13 +64,13 @@ namespace TukitaSystem
         
         public void Destroy()
         {
-            
             if (_customer != null)
             {
+                // Unlink from customer side
                 _customer.SetLoyaltyCard(null);
             }
             
-            _customer = null;
+            _customer = null!; // Mark as null
             _extent.Remove(this);
         }
         

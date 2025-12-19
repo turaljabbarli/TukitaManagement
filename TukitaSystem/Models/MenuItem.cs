@@ -24,12 +24,12 @@ namespace TukitaSystem
         
         public IReadOnlyCollection<Menu> Menus => _menus.ToList();
         
-        
         private readonly HashSet<Ingredient> _ingredients = new HashSet<Ingredient>();
         public IReadOnlyCollection<Ingredient> Ingredients => _ingredients;
         
-        private readonly List<Cook> _cooks = new();
-        public IReadOnlyCollection<Cook> Cooks => _cooks.AsReadOnly();
+        // CHANGED: List<Cook> -> List<CookRole>
+        private readonly List<CookRole> _cooks = new();
+        public IReadOnlyCollection<CookRole> Cooks => _cooks.AsReadOnly();
 
         public MenuItem(string name, decimal price, int calories, string preparationTime)
         {
@@ -41,16 +41,14 @@ namespace TukitaSystem
 
             _extent.Add(this);
         }
+
         public string Name
         {
             get => _name;
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
-                {
                     throw new ArgumentException("Menu item name cannot be empty.");
-                }
-
                 _name = value;
             }
         }
@@ -61,10 +59,7 @@ namespace TukitaSystem
             set
             {
                 if (value < 0)
-                {
                     throw new ArgumentException("Price cannot be negative.");
-                }
-
                 _price = value;
             }
         }
@@ -75,10 +70,7 @@ namespace TukitaSystem
             set
             {
                 if (value < 0)
-                {
                     throw new ArgumentException("Calories cannot be negative.");
-                }
-
                 _calories = value;
             }
         }
@@ -89,10 +81,7 @@ namespace TukitaSystem
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
-                {
                     throw new ArgumentException("Preparation time cannot be empty..");
-                }
-
                 _preparationTime = value;
             }
         }
@@ -106,70 +95,54 @@ namespace TukitaSystem
         public void AddMenu(Menu menu)
         {
             if (menu == null) throw new ArgumentNullException(nameof(menu));
-            
-            if (_menus.Contains(menu))
-                return;
+            if (_menus.Contains(menu)) return;
 
             _menus.Add(menu);
-            
             menu.AddMenuItem(this);
         }
 
         public void RemoveMenu(Menu menu)
         {
             if (menu == null) return;
-
-            if (!_menus.Contains(menu))
-                return;
+            if (!_menus.Contains(menu)) return;
 
             _menus.Remove(menu);
-
             menu.RemoveMenuItem(this);
         }
         
         public void AddIngredient(Ingredient ingredient)
         {
-            if (ingredient == null)
-            {
-                throw new ArgumentNullException(nameof(ingredient));
-            }
-
-            if (_ingredients.Contains(ingredient))
-                return;
+            if (ingredient == null) throw new ArgumentNullException(nameof(ingredient));
+            if (_ingredients.Contains(ingredient)) return;
 
             _ingredients.Add(ingredient);
-            
             ingredient.AddMenuItem(this);
         }
         
         public bool RemoveIngredient(Ingredient ingredient)
         {
-            if (ingredient == null)
-                return false;
-
-            if (!_ingredients.Contains(ingredient))
-                return false;
+            if (ingredient == null) return false;
+            if (!_ingredients.Contains(ingredient)) return false;
 
             _ingredients.Remove(ingredient);
-            
             ingredient.RemoveMenuItem(this);
-
             return true;
         }
         
-        public void AddCook(Cook cook)
+        // CHANGED: Cook -> CookRole
+        public void AddCook(CookRole cook)
         {
-            if (_cooks.Contains(cook))
-                return;
+            if (_cooks.Contains(cook)) return;
 
             _cooks.Add(cook);
+            // This calls the method on CookRole we created in Step 1
             cook.AddSignatureDish(this);
         }
         
-        public void RemoveCook(Cook cook)
+        // CHANGED: Cook -> CookRole
+        public void RemoveCook(CookRole cook)
         {
-            if (!_cooks.Contains(cook))
-                return;
+            if (!_cooks.Contains(cook)) return;
 
             _cooks.Remove(cook);
             cook.RemoveSignatureDish(this);

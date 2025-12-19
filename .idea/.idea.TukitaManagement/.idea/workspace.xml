@@ -7,7 +7,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7070af28-bfb0-43c8-9441-5c58dc7d2ecc" name="Changes" comment="" />
+    <list default="true" id="7070af28-bfb0-43c8-9441-5c58dc7d2ecc" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.TukitaManagement/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TukitaManagement/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TukitaSystem.Tests/AssociationTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TukitaSystem.Tests/AssociationTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TukitaSystem.Tests/AttributeAssociationTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TukitaSystem.Tests/AttributeAssociationTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TukitaSystem.Tests/EmployeeTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TukitaSystem.Tests/EmployeeTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TukitaSystem.Tests/ManagerTrainingTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TukitaSystem.Tests/ManagerTrainingTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TukitaSystem.Tests/SystemTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TukitaSystem.Tests/SystemTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TukitaSystem/Models/Cashier.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TukitaSystem/Models/Cook.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TukitaSystem/Models/Customer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TukitaSystem/Models/Customer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TukitaSystem/Models/Employee.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TukitaSystem/Models/Employee.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TukitaSystem/Models/LoyaltyCard.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TukitaSystem/Models/LoyaltyCard.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TukitaSystem/Models/Manager.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TukitaSystem/Models/MenuItem.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TukitaSystem/Models/MenuItem.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TukitaSystem/Models/Order.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TukitaSystem/Models/Order.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TukitaSystem/Models/Training.cs" beforeDir="false" afterPath="$PROJECT_DIR$/TukitaSystem/Models/Training.cs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -16,15 +32,24 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/TukitaSystem.Tests/AggregationTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TukitaSystem.Tests/AssociationTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TukitaSystem.Tests/CompositionTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TukitaSystem.Tests/InheritanceTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TukitaSystem/Models/EmployeeFactory.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TukitaSystem/Models/EmployeeRoles.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TukitaSystem/Models/OrderDetail.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="false" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="1" id="Add" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "git-widget-placeholder": "Tural"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;git-widget-placeholder&quot;: &quot;Tural&quot;
   }
-}]]></component>
+}</component>
   <component name="TaskManager">
     <servers />
   </component>

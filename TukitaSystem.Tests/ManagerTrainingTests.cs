@@ -1,12 +1,20 @@
-﻿
+﻿using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TukitaSystem.Tests
 {
     public class ManagerTrainingTests
     {
-        private Manager CreateManager(RankType rank)
+        private ManagerRole GetManagerRole(Employee emp)
         {
-            return new Manager(
+            return (ManagerRole)emp.Role;
+        }
+
+        private Employee CreateManagerEmployee(RankType rank)
+        {
+            return EmployeeFactory.CreateManager(
                 "Test", 
                 "Manager", 
                 "PASS123", 
@@ -18,115 +26,110 @@ namespace TukitaSystem.Tests
             );
         }
 
-        // --- Тесты для роли Учителя (Teacher / Leading) ---
-
         [Test]
         public void CreateTraining_WithLeadManagerAsTeacher_ShouldSucceedAndLink()
         {
-            var leadManager = CreateManager(RankType.Lead);
+            var leadEmp = CreateManagerEmployee(RankType.Lead);
+            var leadRole = GetManagerRole(leadEmp);
             
-            // Создаем тренинг: Студент = null, Учитель = leadManager
-            var training = new Training(null, leadManager, DateTime.Now);
+            var training = new Training(null, leadRole, DateTime.Now);
 
-            // Проверяем, что тренинг попал в список LeadingTrainings учителя
-            Assert.Contains(training, leadManager.LeadingTrainings.ToList()); 
+            Assert.Contains(training, leadRole.LeadingTrainings.ToList()); 
             
-            // Проверяем обратную связь
-            Assert.AreEqual(leadManager, training.ManagerTeacher);          
+            Assert.AreEqual(leadRole, training.ManagerTeacher);          
         }
 
         [Test]
         public void CreateTraining_WithJuniorManagerAsTeacher_ShouldThrowException()
         {
-            var juniorManager = CreateManager(RankType.Junior);
+            var juniorEmp = CreateManagerEmployee(RankType.Junior);
+            var juniorRole = GetManagerRole(juniorEmp);
 
-            // Попытка назначить Junior учителем должна вызвать ошибку
             var ex = Assert.Throws<InvalidOperationException>(() => 
-                new Training(null, juniorManager, DateTime.Now)
+                new Training(null, juniorRole, DateTime.Now)
             );
             
-            // Ожидаем сообщение про ранг Lead (или общее исключение из Manager.AddLeadingTraining)
             Assert.That(ex.Message, Does.Contain("Lead").Or.Contain("rank"));
         }
 
         [Test]
         public void RemoveLeadingTraining_ShouldUnlinkBothSides()
         {
-            var leadManager = CreateManager(RankType.Lead);
-            var training = new Training(null, leadManager, DateTime.Now);
+            var leadEmp = CreateManagerEmployee(RankType.Lead);
+            var leadRole = GetManagerRole(leadEmp);
+            
+            var training = new Training(null, leadRole, DateTime.Now);
 
-            // Учитель отказывается вести тренинг
-            leadManager.RemoveLeadingTraining(training);
+            leadRole.RemoveLeadingTraining(training);
 
-            Assert.IsFalse(leadManager.LeadingTrainings.Contains(training)); 
+            Assert.IsFalse(leadRole.LeadingTrainings.Contains(training)); 
             Assert.IsNull(training.ManagerTeacher);
         }
 
         [Test]
         public void ReassignTeacher_ShouldUpdateListsCorrectly()
         {
-            var lead1 = CreateManager(RankType.Lead);
-            var lead2 = CreateManager(RankType.Lead);
-            var training = new Training(null, lead1, DateTime.Now);
+            var leadEmp1 = CreateManagerEmployee(RankType.Lead);
+            var leadRole1 = GetManagerRole(leadEmp1);
 
-            // Меняем учителя через метод тренинга
-            training.SetManagerTeacher(lead2);
-
-            // Проверяем, что у первого учителя тренинг пропал
-            Assert.IsFalse(lead1.LeadingTrainings.Contains(training));
+            var leadEmp2 = CreateManagerEmployee(RankType.Lead);
+            var leadRole2 = GetManagerRole(leadEmp2);
             
-            // Проверяем, что у второго появился
-            Assert.IsTrue(lead2.LeadingTrainings.Contains(training));
-            Assert.AreEqual(lead2, training.ManagerTeacher);
-        }
+            var training = new Training(null, leadRole1, DateTime.Now);
 
-        // --- Тесты для роли Студента (Student) ---
+            training.SetManagerTeacher(leadRole2);
+
+            Assert.IsFalse(leadRole1.LeadingTrainings.Contains(training));
+            
+            Assert.IsTrue(leadRole2.LeadingTrainings.Contains(training));
+            Assert.AreEqual(leadRole2, training.ManagerTeacher);
+        }
 
         [Test]
         public void AssignStudent_ShouldLinkCorrectly()
         {
-            var studentManager = CreateManager(RankType.Junior); // Джуниор может быть студентом
-            var training = new Training(studentManager, null, DateTime.Now);
+            var juniorEmp = CreateManagerEmployee(RankType.Junior);
+            var juniorRole = GetManagerRole(juniorEmp);
+            
+            var training = new Training(juniorRole, null, DateTime.Now);
 
-            Assert.AreEqual(training, studentManager.StudentTraining);
-            Assert.AreEqual(studentManager, training.ManagerStudent);
+            Assert.AreEqual(training, juniorRole.StudentTraining);
+            Assert.AreEqual(juniorRole, training.ManagerStudent);
         }
 
         [Test]
         public void Student_CanOnlyHaveOneTrainingAtATime()
         {
-            var student = CreateManager(RankType.Senior);
+            var studentEmp = CreateManagerEmployee(RankType.Senior);
+            var studentRole = GetManagerRole(studentEmp);
             
-            var training1 = new Training(student, null, DateTime.Now);
-            var training2 = new Training(null, null, DateTime.Now); // Создаем пока без студентов
+            var training1 = new Training(studentRole, null, DateTime.Now);
+            var training2 = new Training(null, null, DateTime.Now); 
 
-            // Назначаем студенту второй тренинг
-            student.SetStudentTraining(training2);
+            studentRole.SetStudentTraining(training2);
 
-            // Проверяем, что ссылка обновилась
-            Assert.AreEqual(training2, student.StudentTraining);
-            Assert.AreEqual(student, training2.ManagerStudent);
+            Assert.AreEqual(training2, studentRole.StudentTraining);
+            Assert.AreEqual(studentRole, training2.ManagerStudent);
 
-            // Проверяем, что старый тренинг "забыл" этого студента
             Assert.IsNull(training1.ManagerStudent);
         }
 
         [Test]
         public void FullTrainingSetup_TeacherAndStudent()
         {
-            var teacher = CreateManager(RankType.Lead);
-            var student = CreateManager(RankType.Junior);
+            var teacherEmp = CreateManagerEmployee(RankType.Lead);
+            var teacherRole = GetManagerRole(teacherEmp);
+            
+            var studentEmp = CreateManagerEmployee(RankType.Junior);
+            var studentRole = GetManagerRole(studentEmp);
 
-            // Создаем тренинг сразу с учителем и учеником
-            var training = new Training(student, teacher, DateTime.Now);
+            var training = new Training(studentRole, teacherRole, DateTime.Now);
 
-            // Проверки учителя
-            Assert.Contains(training, teacher.LeadingTrainings.ToList());
-            Assert.AreEqual(teacher, training.ManagerTeacher);
+            Assert.Contains(training, teacherRole.LeadingTrainings.ToList());
+            Assert.AreEqual(teacherRole, training.ManagerTeacher);
 
-            // Проверки студента
-            Assert.AreEqual(training, student.StudentTraining);
-            Assert.AreEqual(student, training.ManagerStudent);
+            Assert.AreEqual(training, studentRole.StudentTraining);
+            Assert.AreEqual(studentRole, training.ManagerStudent);
         }
     }
 }

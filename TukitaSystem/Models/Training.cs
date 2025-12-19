@@ -7,14 +7,16 @@ namespace TukitaSystem
     {
         private static List<Training> _extent = new List<Training>();
 
-        private Manager? _managerStudent;
-        private Manager? _managerTeacher;
+        // CHANGED: Manager -> ManagerRole
+        private ManagerRole? _managerStudent;
+        private ManagerRole? _managerTeacher;
 
         public DateTime TrainingStart { get; set; }
         public DateTime? TrainingEnd { get; set; }
         public string? Comments { get; set; }
 
-        public Training(Manager? student, Manager? teacher, DateTime trainingStart)
+        // CHANGED: Constructor accepts ManagerRoles
+        public Training(ManagerRole? student, ManagerRole? teacher, DateTime trainingStart)
         {
             TrainingStart = trainingStart;
 
@@ -31,10 +33,10 @@ namespace TukitaSystem
             _extent.Add(this);
         }
 
+        // CHANGED: Return type and parameter type
+        public ManagerRole? ManagerStudent => _managerStudent;
 
-        public Manager? ManagerStudent => _managerStudent;
-
-        public void SetManagerStudent(Manager? newStudent)
+        public void SetManagerStudent(ManagerRole? newStudent)
         {
             if (_managerStudent == newStudent) return;
 
@@ -55,13 +57,14 @@ namespace TukitaSystem
             }
         }
 
+        // CHANGED: Return type and parameter type
+        public ManagerRole? ManagerTeacher => _managerTeacher;
 
-        public Manager? ManagerTeacher => _managerTeacher;
-
-        public void SetManagerTeacher(Manager? newTeacher)
+        public void SetManagerTeacher(ManagerRole? newTeacher)
         {
             if (_managerTeacher == newTeacher) return;
 
+            // ManagerRole has the RankType property, so this logic remains valid
             if (newTeacher != null && newTeacher.RankType != RankType.Lead)
             {
                 throw new InvalidOperationException("Cannot assign a non-Lead manager as a teacher.");

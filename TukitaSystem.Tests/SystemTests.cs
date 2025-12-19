@@ -28,10 +28,9 @@ namespace TukitaSystem.Tests
         [Test]
         public void Order_CalculateFinalPrice_SumsCorrectly()
         {
-            var cashier = new Cashier("Alice", "Smith", "FF31213123", DateTime.Today.AddYears(-25), 2500, DateTime.Today)
-            {
-                PeselNumber = "1234567890"
-            };
+            var cashier = EmployeeFactory.CreateCashier("Alice", "Smith", "FF31213123", DateTime.Today.AddYears(-25), 2500, DateTime.Today);
+            cashier.PeselNumber = "12345678903"; 
+    
             var customer = new Customer("Bob", "bob@example.com");
             var order = new Order(cashier, customer);
 
@@ -65,7 +64,7 @@ namespace TukitaSystem.Tests
         [Test]
         public void Shift_EndBeforeStart_ThrowsException()
         {
-            var cashier = new Cashier("Alice", "Smith", "FS1234567", DateTime.Today.AddYears(-25), 2500, DateTime.Today);
+            var cashier = EmployeeFactory.CreateCashier("Alice", "Smith", "FS1234567", DateTime.Today.AddYears(-25), 2500, DateTime.Today);
             var start = new TimeSpan(14, 0, 0);
             var end = new TimeSpan(10, 0, 0);
 

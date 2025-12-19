@@ -45,12 +45,14 @@ namespace TukitaSystem
             }
         }
 
+        // --- THIS WAS EMPTY BEFORE. IT NEEDS THIS CODE TO PASS TESTS ---
         public void CreateLoyaltyCard(string cardNumber, DateTime expiryDate)
         {
             if (_loyaltyCard != null)
                 throw new InvalidOperationException("Customer already has a loyalty card.");
             
-           
+            // This line actually creates the card and links it!
+            new LoyaltyCard(this, cardNumber, DateTime.Now, expiryDate);
         }
 
         public void RemoveLoyaltyCard()
@@ -61,10 +63,8 @@ namespace TukitaSystem
             }
         }
 
-        
         public void SetLoyaltyCard(LoyaltyCard? card)
         {
-           
             if (card != null && _loyaltyCard != null && _loyaltyCard != card)
             {
                 throw new InvalidOperationException("Customer already has a loyalty card assigned.");
@@ -84,7 +84,6 @@ namespace TukitaSystem
             _extent.Remove(customer);
         }
 
-     
         public static List<Customer> GetExtent() => new List<Customer>(_extent);
         public static void SaveExtent() => StorageService.Save(_extent, FilePath);
         public static void LoadExtent() => _extent = StorageService.Load<Customer>(FilePath);
