@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
+﻿
 namespace TukitaSystem
 {
-    [JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
-    [JsonDerivedType(typeof(Cashier), "Cashier")]
-    [JsonDerivedType(typeof(Manager), "Manager")]
-    [JsonDerivedType(typeof(Cook), "Cook")]
-    public abstract class Employee
+    public class Employee
     {
         private static List<Employee> _extent = new List<Employee>();
         private static readonly string FilePath = "employees.json";
+
+        private readonly List<object> _roles = new List<object>();
 
         private string _name;
         private string _surname;
@@ -37,7 +30,26 @@ namespace TukitaSystem
 
             _extent.Add(this);
         }
+
         
+        
+        public void AddRole(object role)
+        {
+            if (role == null) throw new ArgumentNullException(nameof(role));
+            // Проверяем, нет ли уже роли такого типа
+            if (!_roles.Any(r => r.GetType() == role.GetType()))
+            {
+                _roles.Add(role);
+            }
+        }
+
+       
+        public T? GetRole<T>() where T : class
+        {
+            return _roles.OfType<T>().FirstOrDefault();
+        }
+
+
         public string? PeselNumber
         {
             get => _peselNumber;
@@ -45,7 +57,6 @@ namespace TukitaSystem
             {
                 if (!IsValidPesel(value))
                     throw new ArgumentException($"Invalid PESEL number: {value}");
-                
                 _peselNumber = value;
             }
         }
@@ -56,7 +67,7 @@ namespace TukitaSystem
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("Name cannot be empty or whitespace");
+                    throw new ArgumentException("Name cannot be empty");
                 _name = value;
             }
         }
@@ -67,7 +78,7 @@ namespace TukitaSystem
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("Surname cannot be empty or whitespace");
+                    throw new ArgumentException("Surname cannot be empty");
                 _surname = value;
             }
         }
@@ -78,7 +89,7 @@ namespace TukitaSystem
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("Passport number cannot be empty or whitespace");
+                    throw new ArgumentException("Passport number cannot be empty");
                 _passportNumber = value;
             }
         }
@@ -116,6 +127,7 @@ namespace TukitaSystem
             }
         }
 
+
         public int Age
         {
             get
@@ -136,6 +148,7 @@ namespace TukitaSystem
 
                 if (yearsWorked < 0) yearsWorked = 0;
 
+                // Рост зарплаты на 3% за каждый год выслуги
                 decimal multiplier = (decimal)Math.Pow(1.03, yearsWorked);
                 return Math.Round(_baseSalary * multiplier, 2);
             }
@@ -159,7 +172,6 @@ namespace TukitaSystem
         {
             if (_assignments.Contains(assignment))
                 throw new InvalidOperationException("Duplicate ShiftAssignment");
-
             _assignments.Add(assignment);
         }
 
@@ -167,50 +179,31 @@ namespace TukitaSystem
         {
             if (!_assignments.Contains(assignment))
                 throw new InvalidOperationException("Assignment not found");
-
             _assignments.Remove(assignment);
         }
 
-        public static List<Employee> GetExtent()
-        {
-            return new List<Employee>(_extent);
-        }
+        public static List<Employee> GetExtent() => new List<Employee>(_extent);
         
-        public static void ClearExtent()
-        {
-            _extent.Clear();
-        }
+        public static void ClearExtent() => _extent.Clear();
         
-        public static void SaveExtent()
-        {
-            StorageService.Save(_extent, FilePath);
-        }
+        public static void SaveExtent() => StorageService.Save(_extent, FilePath);
 
-        public static void LoadExtent()
-        {
-            _extent = StorageService.Load<Employee>(FilePath);
-        }
+        public static void LoadExtent() => _extent = StorageService.Load<Employee>(FilePath);
+        
 
         private bool IsValidPesel(string? pesel)
         {
-            
             if (pesel == null) return true;
-
             if (pesel.Length != 11) return false;
-
             if (!pesel.All(char.IsDigit)) return false;
 
             int[] weights = { 1, 3, 7, 9, 1, 3, 7, 9, 1, 3 };
             int sum = 0;
-
             for (int i = 0; i < 10; i++)
-            {
                 sum += (pesel[i] - '0') * weights[i];
-            }
 
             int lastDigit = sum % 10;
             int checkDigit = (10 - lastDigit) % 10;
-
             return checkDigit == (pesel[10] - '0');
         }
     }

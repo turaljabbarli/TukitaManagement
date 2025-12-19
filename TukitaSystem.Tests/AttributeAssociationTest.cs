@@ -10,10 +10,10 @@ public class AttributeAssociationTest
     public void Setup()
     {
         emp1 = new Cashier("John", "Smith", "P123", 
-            new DateTime(1990, 1, 1), 3000, new DateTime(2020, 1, 1));
+            new DateTime(1990, 1, 1), 3000, new DateTime(2020, 1, 1))._employee;
 
         emp2 = new Cashier("Anna", "Johnson", "P222",
-            new DateTime(1985, 5, 10), 3200, new DateTime(2018, 1, 1));
+            new DateTime(1985, 5, 10), 3200, new DateTime(2018, 1, 1))._employee;
     }
     private Order CreateTestOrder()
     {

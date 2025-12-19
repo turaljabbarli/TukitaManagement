@@ -33,7 +33,7 @@ public class AssociationTests
             3200,
             DateTime.Now.AddYears(-7),
             "PJATK",
-            new List<MenuItem> { burger, drink });
+            burger);
 
         Assert.Contains(cook, burger.Cooks.ToList());
         Assert.Contains(cook, drink.Cooks.ToList());
@@ -46,7 +46,7 @@ public class AssociationTests
         {
             var cook = new Cook("Anna", "Smith", "P2",
                 DateTime.Now.AddYears(-30), 3000, DateTime.Now.AddYears(-5),
-                "CookingSchool", new List<MenuItem>());
+                "CookingSchool", new Burger("Burger", 10m, 500, "10 min", new List<PattyType> { PattyType.Beef }));
         });
     }
     
@@ -57,11 +57,10 @@ public class AssociationTests
         var cook = new Cook("Anna", "Smith", "P2",
             DateTime.Now.AddYears(-30), 3000,
             DateTime.Now.AddYears(-5),
-            "School", new List<MenuItem> { burger });
+            "School", burger);
 
         cook.AddSignatureDish(burger);
-
-        Assert.AreEqual(1, cook.SignatureDishes.Count);
+        
         Assert.AreEqual(1, burger.Cooks.Count);
     }
     
@@ -72,14 +71,14 @@ public class AssociationTests
         var cook = new Cook("Bob", "Chef", "P3",
             DateTime.Now.AddYears(-40), 3500,
             DateTime.Now.AddYears(-10),
-            "School", new List<MenuItem> { pasta });
+            "School", pasta);
 
         var burger = new Burger("Burger", 12m, 700, "10 min",
             new List<PattyType> { PattyType.Beef });
 
         burger.AddCook(cook);
 
-        Assert.Contains(burger, cook.SignatureDishes.ToList());
+        Assert.Equals(burger, cook.SignatureDish);
         Assert.Contains(cook, burger.Cooks.ToList());
     }
     
@@ -92,11 +91,10 @@ public class AssociationTests
         var cook = new Cook("Anna", "Smith", "P1",
             DateTime.Now.AddYears(-40), 3000,
             DateTime.Now.AddYears(-10),
-            "School", new List<MenuItem> { burger, drink });
+            "School", burger);
 
         cook.RemoveSignatureDish(drink);
-
-        Assert.False(cook.SignatureDishes.Contains(drink));
+        
         Assert.False(drink.Cooks.Contains(cook));
     }
     
@@ -109,7 +107,7 @@ public class AssociationTests
         var cook = new Cook("Anna", "Smith", "P1",
             DateTime.Now.AddYears(-40), 3000,
             DateTime.Now.AddYears(-10),
-            "School", new List<MenuItem> { burger });
+            "School", burger);
 
         Assert.Throws<InvalidOperationException>(() =>
         {

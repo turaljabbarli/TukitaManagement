@@ -17,7 +17,7 @@ namespace TukitaSystem.Tests
                 new List<PattyType> { PattyType.Beef });
             var drink = new Drink("Coke", 2.5m, 150, "10-15 minutes", true, SizeType.Medium);
             var cook = new Cook("Anna", "Smith", "P2", DateTime.Now.AddYears(-35), 3200, DateTime.Now.AddYears(-7),
-                "PJATK", new List<MenuItem> { burger, drink });
+                "PJATK", burger);
 
             var allEmployees = Employee.GetExtent();
 
@@ -50,10 +50,9 @@ namespace TukitaSystem.Tests
             var burger = new Burger("Cheeseburger", 10.0m, 800, "10-15 minutes",
                 new List<PattyType> { PattyType.Beef });
             var drink = new Drink("Coke", 2.5m, 150, "10-15 minutes", true, SizeType.Medium);
-            var cook = new Cook("Anna", "Smith", "P2", birthDate, 3200, DateTime.Now.AddYears(-7), "PJATK",
-                new List<MenuItem> { burger, drink });
+            var cook = new Cook("Anna", "Smith", "P2", birthDate, 3200, DateTime.Now.AddYears(-7), "PJATK", burger);
 
-            Assert.AreEqual(25, cook.Age);
+            Assert.AreEqual(25, cook._employee.Age);
         }
 
         [Test]
@@ -66,9 +65,9 @@ namespace TukitaSystem.Tests
                 new List<PattyType> { PattyType.Beef });
             var drink = new Drink("Coke", 2.5m, 150, "10-15 minutes", true, SizeType.Medium);
             var cook = new Cook("Anna", "Smith", "P2", DateTime.Today.AddYears(-30), baseSalary, employmentDate,
-                "PJATK", new List<MenuItem> { burger, drink });
+                "PJATK", burger);
 
-            Assert.AreEqual(1030m, cook.CurrentSalary);
+            Assert.AreEqual(1030m, cook._employee.CurrentSalary);
         }
     }
 }

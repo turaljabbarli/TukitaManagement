@@ -3,19 +3,25 @@ using System.Collections.Generic;
 
 namespace TukitaSystem
 {
-    public class Manager : Employee
+    public class Manager
     {
+        public readonly Employee _employee;
         private int _yearsOfExperience;
-
         private Training? _studentTraining;
-
         private List<Training> _leadingTrainings = new List<Training>();
 
         public Manager(string name, string surname, string passportNumber, DateTime birthDate, decimal baseSalary, DateTime employmentDate, RankType rankType, int yearsOfExperience)
-            : base(name, surname, passportNumber, birthDate, baseSalary, employmentDate)
+            : this(new Employee(name, surname, passportNumber, birthDate, baseSalary, employmentDate), rankType, yearsOfExperience)
         {
+        }
+
+        public Manager(Employee employee, RankType rankType, int yearsOfExperience)
+        {
+            _employee = employee ?? throw new ArgumentNullException(nameof(employee));
             RankType = rankType;
             YearsOfExperience = yearsOfExperience;
+
+            _employee.AddRole(this);
         }
 
         public RankType RankType { get; set; }
@@ -25,12 +31,10 @@ namespace TukitaSystem
             get => _yearsOfExperience;
             set
             {
-                if (value < 0)
-                    throw new ArgumentException("Years of experience cannot be negative.");
+                if (value < 0) throw new ArgumentException("Years of experience cannot be negative.");
                 _yearsOfExperience = value;
             }
         }
-
 
         public Training? StudentTraining => _studentTraining;
 
@@ -46,50 +50,37 @@ namespace TukitaSystem
             }
 
             _studentTraining = training;
-
             if (_studentTraining != null && _studentTraining.ManagerStudent != this)
             {
                 _studentTraining.SetManagerStudent(this);
             }
         }
 
-
         public IReadOnlyCollection<Training> LeadingTrainings => _leadingTrainings.AsReadOnly();
 
         public void AddLeadingTraining(Training training)
         {
             if (training == null) throw new ArgumentNullException(nameof(training));
-
             if (this.RankType != RankType.Lead)
-            {
                 throw new InvalidOperationException("This manager does not have the 'Lead' rank and cannot conduct training.");
-            }
 
             if (!_leadingTrainings.Contains(training))
             {
                 _leadingTrainings.Add(training);
-
-                if (training.ManagerTeacher != this)
-                {
-                    training.SetManagerTeacher(this);
-                }
+                if (training.ManagerTeacher != this) training.SetManagerTeacher(this);
             }
         }
 
         public void RemoveLeadingTraining(Training training)
         {
             if (training == null) return;
-
             if (_leadingTrainings.Contains(training))
             {
                 _leadingTrainings.Remove(training);
-
-                
-                if (training.ManagerTeacher == this)
-                {
-                    training.SetManagerTeacher(null);
-                }
+                if (training.ManagerTeacher == this) training.SetManagerTeacher(null);
             }
         }
+
+        public Employee BaseEmployee => _employee;
     }
 }
